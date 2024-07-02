@@ -13,9 +13,9 @@ namespace trajectories_processors
 using namespace graph::core;
 
 /**
- * @brief The robot_state struct represents a robot state, that is robot position, velocity, acceleration and effort.
+ * @brief The RobotState struct represents a robot state, that is robot position, velocity, acceleration and effort.
  */
-struct robot_state
+struct RobotState
 {
 public:
   std::vector<double> pos_;
@@ -30,7 +30,7 @@ public:
 struct TrjPoint
 {
 public:
-  robot_state state_;
+  RobotState state_;
   double time_from_start_;
 };
 
@@ -158,13 +158,13 @@ public:
   }
   /**
    * @brief Pure virtual function to compute the trajectory.
-   * @param initial_state The initial trj point.
-   * @param final_pnt The final trj point.
+   * @param initial_state The initial robot state.
+   * @param final_state The final robot state.
    * @return True if the trajectory computation is successful, false otherwise.
    */
   virtual bool computeTrj() = 0;
-  virtual bool computeTrj(const TrjPoint& initial_pnt) = 0;
-  virtual bool computeTrj(const TrjPoint& initial_pnt, const TrjPoint& final_pnt) = 0;
+  virtual bool computeTrj(const RobotState& initial_state) = 0;
+  virtual bool computeTrj(const RobotState& initial_state, const RobotState& final_state) = 0;
 
 
   /**

@@ -20,12 +20,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(cnr_logger REQUIRED)
 find_package(cnr_param REQUIRED)
-#find_package(cnr_class_loader REQUIRED)
 
 set(DEPS
    cnr_logger::cnr_logger
-    cnr_param::cnr_param
-#    cnr_class_loader::cnr_class_loader
+   cnr_param::cnr_param
 )
 
 add_library(${PROJECT_NAME} SHARED

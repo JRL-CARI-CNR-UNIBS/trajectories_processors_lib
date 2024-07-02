@@ -18,6 +18,7 @@ typedef std::shared_ptr<SplineTrajectoryProcessor> SplineTrajectoryProcessorPtr;
 
 class SplineTrajectoryProcessor: public TrajectoryProcessorBase
 {
+protected:
   /**
    * @brief Enum for spline order.
    *        - ZERO: position continuous
@@ -27,8 +28,6 @@ class SplineTrajectoryProcessor: public TrajectoryProcessorBase
    *        - FOUR: snap continuous
    */
   enum class spline_order_t {ZERO, ONE, TWO, THREE, FOUR};
-
-protected:
 
   /**
    * @brief The order of the spline. Default order is ONE.
@@ -41,11 +40,14 @@ public:
   /**
    * @brief Constructors.
    */
-  SplineSplineTrajectoryProcessor(const KinodynamicConstraints& constraints, const cnr_logger::TraceLoggerPtr& logger):TrajectoryProcessorBase(constraints,logger){}
-  SplineSplineTrajectoryProcessor(const KinodynamicConstraints& constraints, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path):
-    TrajectoryProcessorBase(constraints,logger,path){}
-  SplineSplineTrajectoryProcessor(const KinodynamicConstraints& constraints, const cnr_logger::TraceLoggerPtr& logger, const spline_order_t& spline_order):TrajectoryProcessorBase(constraints,logger),spline_order_(spline_order){}
-  SplineSplineTrajectoryProcessor(const KinodynamicConstraints& constraints, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path,const spline_order_t& spline_order):TrajectoryProcessorBase(constraints,logger,path),spline_order_(spline_order){}
+  SplineTrajectoryProcessor(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger):
+    TrajectoryProcessorBase(constraints,param_ns,logger){}
+  SplineTrajectoryProcessor(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path):
+    TrajectoryProcessorBase(constraints,param_ns,logger,path){}
+  SplineTrajectoryProcessor(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const spline_order_t& spline_order):
+    TrajectoryProcessorBase(constraints,param_ns,logger),spline_order_(spline_order){}
+  SplineTrajectoryProcessor(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path,const spline_order_t& spline_order):
+    TrajectoryProcessorBase(constraints,param_ns,logger,path),spline_order_(spline_order){}
 
   /**
    * @brief init Initializes the TrajectoryProcessor object. This function should be called when the void constructor is called and it is used mainly for plugins.
@@ -70,13 +72,13 @@ public:
 
   /**
    * @brief Function to compute the trajectory.
-   * @param initial_state The initial trj point.
-   * @param final_pnt The final trj point.
+   * @param initial_state The initial robot state.
+   * @param final_state The final robot state.
    * @return True if the trajectory computation is successful, false otherwise.
    */
   //  virtual bool computeTrj() override;
-  //  virtual bool computeTrj(const TrjPoint& initial_pnt) override;
-  //  virtual bool computeTrj(const TrjPoint& initial_pnt, const TrjPoint& final_pnt) override;
+  //  virtual bool computeTrj(const RobotState& initial_state) override;
+  //  virtual bool computeTrj(const RobotState& initial_state, const RobotState& final_state) override;
 
 
   /**
