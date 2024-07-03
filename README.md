@@ -44,6 +44,8 @@ Represents the kinodynamic constraints of the robot.
 - **Members**:
   - `Eigen::VectorXd max_vel_`
   - `Eigen::VectorXd max_acc_`
+  - `Eigen::VectorXd min_vel_`
+  - `Eigen::VectorXd min_acc_`
 
 ## Usage
 
