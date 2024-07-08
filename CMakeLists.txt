@@ -55,11 +55,19 @@ install(EXPORT ${PROJECT_NAME}Targets
 )
 
 include(CMakePackageConfigHelpers)
+include(CMakeDependentOption)
+include(GNUInstallDirs)
+
 write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
   VERSION 0.0.1
   COMPATIBILITY AnyNewerVersion)
+configure_package_config_file(
+  ${CMAKE_SOURCE_DIR}/cmake_config/${PROJECT_NAME}Config.cmake.in ${PROJECT_NAME}Config.cmake
+  INSTALL_DESTINATION share/${PROJECT_NAME}/cmake
+  PATH_VARS CMAKE_INSTALL_INCLUDEDIR CMAKE_INSTALL_LIBDIR
+)
 
 install(FILES
-  ${CMAKE_SOURCE_DIR}/cmake_config/${PROJECT_NAME}Config.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
   DESTINATION "share/${PROJECT_NAME}/cmake")

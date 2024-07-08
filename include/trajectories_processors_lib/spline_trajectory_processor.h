@@ -18,7 +18,7 @@ typedef std::shared_ptr<SplineTrajectoryProcessor> SplineTrajectoryProcessorPtr;
 
 class SplineTrajectoryProcessor: public TrajectoryProcessorBase
 {
-protected:
+public:
   /**
    * @brief Enum for spline order.
    *        - ZERO: position continuous
@@ -29,6 +29,7 @@ protected:
    */
   enum class spline_order_t {ZERO, ONE, TWO, THREE, FOUR};
 
+protected:
   /**
    * @brief The order of the spline. Default order is ONE.
    */
@@ -40,13 +41,13 @@ public:
   /**
    * @brief Constructors.
    */
-  SplineTrajectoryProcessor(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger):
+  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger):
     TrajectoryProcessorBase(constraints,param_ns,logger){}
-  SplineTrajectoryProcessor(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path):
+  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path):
     TrajectoryProcessorBase(constraints,param_ns,logger,path){}
-  SplineTrajectoryProcessor(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const spline_order_t& spline_order):
+  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const spline_order_t& spline_order):
     TrajectoryProcessorBase(constraints,param_ns,logger),spline_order_(spline_order){}
-  SplineTrajectoryProcessor(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path,const spline_order_t& spline_order):
+  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path,const spline_order_t& spline_order):
     TrajectoryProcessorBase(constraints,param_ns,logger,path),spline_order_(spline_order){}
 
   /**
@@ -57,8 +58,8 @@ public:
    * @param path The path for which the time-law need to be computed.
    * @return
    */
-  virtual bool init(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger) override;
-  virtual bool init(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path) override;
+  virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger) override;
+  virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path) override;
 
   /**
    * @brief Sets the order of the spline and clears the trajectory.
@@ -88,6 +89,6 @@ public:
    * @param scaling Scaling factor for interpolation.
    * @return True if the interpolation is successful, false otherwise.
    */
-  virtual bool interpolate(const double& time, TrjPoint& pnt, const double& scaling = 1.0) override;
+  virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& scaling = 1.0) override;
 };
 }

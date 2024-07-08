@@ -124,7 +124,7 @@ void fromEigen2Vector(const Eigen::VectorXd& eigen, std::vector<double> vector)
 //}
 
 
-bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPoint& pnt, const double& scaling)
+bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt, const double& scaling)
 {
   if(trj_.empty())
   {
@@ -135,14 +135,14 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPoint& pnt, c
   if((time-trj_.at(0).time_from_start_)<0)
   {
     pnt=trj_.at(0);
-    pnt.state_.effort_.resize(trj_.at(0).state_.pos_.size(),0);
+    pnt->state_->effort_.resize(trj_.at(0).state_.pos_.size(),0);
     return false;
   }
 
   if ((time-trj_.back().time_from_start_)>=0)
   {
     pnt=trj_.back();
-    pnt.state_.effort_.resize(trj_.back().state_.pos_.size(),0);
+    pnt->state_.effort_.resize(trj_.back().state_.pos_.size(),0);
     return true;
   }
 
@@ -151,11 +151,11 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPoint& pnt, c
     if(((time-trj_.at(iPnt).time_from_start_)<0) && ((time-trj_.at(iPnt-1).time_from_start_)>=0))
     {
       unsigned int nAx=trj_.at(iPnt).state_.pos_.size();
-      pnt.state_.pos_.resize(nAx,0);
-      pnt.state_.vel_.resize(nAx,0);
-      pnt.state_.acc_.resize(nAx,0);
-      pnt.state_.effort_.resize(nAx,0);
-      pnt.time_from_start_=time;
+      pnt->state_->pos_.resize(nAx,0);
+      pnt->state_->vel_.resize(nAx,0);
+      pnt->state_->acc_.resize(nAx,0);
+      pnt->state_->effort_.resize(nAx,0);
+      pnt->time_from_start_=time;
       double delta_time=std::max(1.0e-6,(trj_.at(iPnt).time_from_start_-trj_.at(iPnt-1).time_from_start_));
       double t=(time-trj_.at(iPnt-1).time_from_start_);
       double ratio=t/delta_time;
@@ -164,8 +164,8 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPoint& pnt, c
         //spline
         if(spline_order_==spline_order_t::ZERO)
         {
-          pnt.state_.pos_.at(iAx)=trj_.at(iPnt-1).state_.pos_.at(iAx)+ratio*(trj_.at(iPnt).state_.pos_.at(iAx)-trj_.at(iPnt-1).state_.pos_.at(iAx));
-          pnt.state_.vel_.at(iAx)=(trj_.at(iPnt).state_.pos_.at(iAx)-trj_.at(iPnt-1).state_.pos_.at(iAx))/delta_time;
+          pnt->state_->pos_.at(iAx)=trj_.at(iPnt-1).state_.pos_.at(iAx)+ratio*(trj_.at(iPnt).state_.pos_.at(iAx)-trj_.at(iPnt-1).state_.pos_.at(iAx));
+          pnt->state_->vel_.at(iAx)=(trj_.at(iPnt).state_.pos_.at(iAx)-trj_.at(iPnt-1).state_.pos_.at(iAx))/delta_time;
         }
         else if (spline_order_==spline_order_t::ONE)
         {
@@ -179,9 +179,9 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPoint& pnt, c
           double c3 = -1.0/(delta_time*delta_time)*(p0_1*3.0-pf_1*3.0+delta_time*p0_2*2.0+delta_time*pf_2);
           double c4 = 1.0/(delta_time*delta_time*delta_time)*(p0_1*2.0-pf_1*2.0+delta_time*p0_2+delta_time*pf_2);
 
-          pnt.state_.pos_.at(iAx) = c1+c2*t+c3*(t*t)+c4*(t*t*t);
-          pnt.state_.vel_.at(iAx) = c2+c3*t*2.0+c4*(t*t)*3.0;
-          pnt.state_.acc_.at(iAx) = c3*2.0+c4*t*6.0;
+          pnt->state_->pos_.at(iAx) = c1+c2*t+c3*(t*t)+c4*(t*t*t);
+          pnt->state_->vel_.at(iAx) = c2+c3*t*2.0+c4*(t*t)*3.0;
+          pnt->state_->acc_.at(iAx) = c3*2.0+c4*t*6.0;
         }
         else if (spline_order_==spline_order_t::TWO)
         {
@@ -199,9 +199,9 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPoint& pnt, c
           double c5 = 1.0/(delta_time*delta_time*delta_time*delta_time)*(p0_1*3.0E1-pf_1*3.0E1+delta_time*p0_2*1.6E1+delta_time*pf_2*1.4E1+(delta_time*delta_time)*p0_3*3.0-(delta_time*delta_time)*pf_3*2.0)*(1.0/2.0);
           double c6 = 1.0/(delta_time*delta_time*delta_time*delta_time*delta_time)*(p0_1*1.2E1-pf_1*1.2E1+delta_time*p0_2*6.0+delta_time*pf_2*6.0+(delta_time*delta_time)*p0_3-(delta_time*delta_time)*pf_3)*(-1.0/2.0);
 
-          pnt.state_.pos_.at(iAx)     = c1+c2*t+c3*(t*t)+c4*(t*t*t)+c5*(t*t*t*t)+c6*(t*t*t*t*t);
-          pnt.state_.vel_.at(iAx)    = c2+c3*t*2.0+c4*(t*t)*3.0+c5*(t*t*t)*4.0+c6*(t*t*t*t)*5.0;
-          pnt.state_.acc_.at(iAx) = c3*2.0+c4*t*6.0+c5*(t*t)*1.2E1+c6*(t*t*t)*2.0E1;
+          pnt->state_->pos_.at(iAx)     = c1+c2*t+c3*(t*t)+c4*(t*t*t)+c5*(t*t*t*t)+c6*(t*t*t*t*t);
+          pnt->state_->vel_.at(iAx)    = c2+c3*t*2.0+c4*(t*t)*3.0+c5*(t*t*t)*4.0+c6*(t*t*t*t)*5.0;
+          pnt->state_->acc_.at(iAx) = c3*2.0+c4*t*6.0+c5*(t*t)*1.2E1+c6*(t*t*t)*2.0E1;
         }
         else if (spline_order_==spline_order_t::THREE)
         {
@@ -222,9 +222,9 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPoint& pnt, c
           double c7 = 1.0/(delta_time*delta_time*delta_time*delta_time*delta_time*delta_time)*(p0_1*1.4E2-pf_1*1.4E2+delta_time*p0_2*7.2E1+delta_time*pf_2*6.8E1+(delta_time*delta_time)*p0_3*1.5E1-(delta_time*delta_time)*pf_3*1.3E1)*(-1.0/2.0);
           double c8 = 1.0/(delta_time*delta_time*delta_time*delta_time*delta_time*delta_time*delta_time)*(p0_1*1.0E1-pf_1*1.0E1+delta_time*p0_2*5.0+delta_time*pf_2*5.0+(delta_time*delta_time)*p0_3-(delta_time*delta_time)*pf_3)*2.0;
 
-          pnt.state_.pos_.at(iAx)     = c1+c2*t+c3*(t*t)+c4*(t*t*t)+c5*(t*t*t*t)+c6*(t*t*t*t*t)+c7*(t*t*t*t*t*t)+c8*(t*t*t*t*t*t*t);
-          pnt.state_.vel_.at(iAx)    = c2+c3*t*2.0+c4*(t*t)*3.0+c5*(t*t*t)*4.0+c6*(t*t*t*t)*5.0+c7*(t*t*t*t*t)*6.0+c8*(t*t*t*t*t*t)*7.0;
-          pnt.state_.acc_.at(iAx) = c3*2.0+c4*t*6.0+c5*(t*t)*1.2E1+c6*(t*t*t)*2.0E1+c7*(t*t*t*t)*3.0E1+c8*(t*t*t*t*t)*4.2E1;
+          pnt->state_->pos_.at(iAx)     = c1+c2*t+c3*(t*t)+c4*(t*t*t)+c5*(t*t*t*t)+c6*(t*t*t*t*t)+c7*(t*t*t*t*t*t)+c8*(t*t*t*t*t*t*t);
+          pnt->state_->vel_.at(iAx)    = c2+c3*t*2.0+c4*(t*t)*3.0+c5*(t*t*t)*4.0+c6*(t*t*t*t)*5.0+c7*(t*t*t*t*t)*6.0+c8*(t*t*t*t*t*t)*7.0;
+          pnt->state_->acc_.at(iAx) = c3*2.0+c4*t*6.0+c5*(t*t)*1.2E1+c6*(t*t*t)*2.0E1+c7*(t*t*t*t)*3.0E1+c8*(t*t*t*t*t)*4.2E1;
         }
         else if (spline_order_==spline_order_t::FOUR)
         {
@@ -247,12 +247,12 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPoint& pnt, c
           double c9 = 1.0/(delta_time*delta_time*delta_time*delta_time*delta_time*delta_time*delta_time*delta_time)*(p0_1*1.26E2-pf_1*1.26E2+delta_time*p0_2*6.4E1+delta_time*pf_2*6.2E1+(delta_time*delta_time)*p0_3*1.4E1-(delta_time*delta_time)*pf_3*1.3E1)*(5.0/2.0);
           double c10 = 1.0/(delta_time*delta_time*delta_time*delta_time*delta_time*delta_time*delta_time*delta_time*delta_time)*(p0_1*2.8E1-pf_1*2.8E1+delta_time*p0_2*1.4E1+delta_time*pf_2*1.4E1+(delta_time*delta_time)*p0_3*3.0-(delta_time*delta_time)*pf_3*3.0)*(-5.0/2.0);
 
-          pnt.state_.pos_.at(iAx)     = c1+c2*t+c3*(t*t)+c4*(t*t*t)+c5*(t*t*t*t)+c6*(t*t*t*t*t)+c7*(t*t*t*t*t*t)+c8*(t*t*t*t*t*t*t)+c9*(t*t*t*t*t*t*t*t)+c10*(t*t*t*t*t*t*t*t*t);
-          pnt.state_.vel_.at(iAx)    = c2+c3*t*2.0+c4*(t*t)*3.0+c5*(t*t*t)*4.0+c6*(t*t*t*t)*5.0+c7*(t*t*t*t*t)*6.0+c8*(t*t*t*t*t*t)*7.0+c9*(t*t*t*t*t*t*t)*8.0+c10*(t*t*t*t*t*t*t*t)*9.0;
-          pnt.state_.acc_.at(iAx) = c3*2.0+c4*t*6.0+c5*(t*t)*1.2E1+c6*(t*t*t)*2.0E1+c7*(t*t*t*t)*3.0E1+c8*(t*t*t*t*t)*4.2E1+c9*(t*t*t*t*t*t)*5.6E1+c10*(t*t*t*t*t*t*t)*7.2E1;
+          pnt->state_->pos_.at(iAx)     = c1+c2*t+c3*(t*t)+c4*(t*t*t)+c5*(t*t*t*t)+c6*(t*t*t*t*t)+c7*(t*t*t*t*t*t)+c8*(t*t*t*t*t*t*t)+c9*(t*t*t*t*t*t*t*t)+c10*(t*t*t*t*t*t*t*t*t);
+          pnt->state_->vel_.at(iAx)    = c2+c3*t*2.0+c4*(t*t)*3.0+c5*(t*t*t)*4.0+c6*(t*t*t*t)*5.0+c7*(t*t*t*t*t)*6.0+c8*(t*t*t*t*t*t)*7.0+c9*(t*t*t*t*t*t*t)*8.0+c10*(t*t*t*t*t*t*t*t)*9.0;
+          pnt->state_->acc_.at(iAx) = c3*2.0+c4*t*6.0+c5*(t*t)*1.2E1+c6*(t*t*t)*2.0E1+c7*(t*t*t*t)*3.0E1+c8*(t*t*t*t*t)*4.2E1+c9*(t*t*t*t*t*t)*5.6E1+c10*(t*t*t*t*t*t*t)*7.2E1;
         }
-        pnt.state_.vel_.at(iAx)    *= scaling ;
-        pnt.state_.acc_.at(iAx) *= scaling*scaling;
+        pnt->state_->vel_.at(iAx)    *= scaling ;
+        pnt->state_->acc_.at(iAx) *= scaling*scaling;
       }
       break;
     }
@@ -260,13 +260,13 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPoint& pnt, c
   return true;
 }
 
-bool SplineTrajectoryProcessor::init(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger)
+bool SplineTrajectoryProcessor::init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger)
 {
   trj_.clear();
   path_ = nullptr;
   logger_ = logger;
   param_ns_ = std::move(param_ns);
-  kinodynamic_constraints_ = std::move(constraints);
+  kinodynamic_constraints_ = constraints;
 
   int spline_order;
   std::string what, full_param_name = param_ns+"/spline_order";
@@ -310,13 +310,13 @@ bool SplineTrajectoryProcessor::init(const KinodynamicConstraints& constraints, 
 
   return true;
 }
-bool SplineTrajectoryProcessor::init(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path)
+bool SplineTrajectoryProcessor::init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path)
 {
   trj_.clear();
   path_ = path;
   logger_ = logger;
   param_ns_ = std::move(param_ns);
-  kinodynamic_constraints_ = std::move(constraints);
+  kinodynamic_constraints_ = constraints;
 
   int spline_order;
   std::string what, full_param_name = param_ns+"/spline_order";

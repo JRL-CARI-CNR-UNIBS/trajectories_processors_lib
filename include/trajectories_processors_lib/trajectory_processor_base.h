@@ -23,6 +23,7 @@ public:
   std::vector<double> acc_;
   std::vector<double> eff_;
 };
+typedef std::shared_ptr<RobotState> RobotStatePtr;
 
 /**
  * @brief The TrjPoint struct represents a trajectory point, that is made up of a robot state and a time from trajectory start.
@@ -30,9 +31,10 @@ public:
 struct TrjPoint
 {
 public:
-  RobotState state_;
+  RobotStatePtr state_;
   double time_from_start_;
 };
+typedef std::shared_ptr<TrjPoint> TrjPointPtr;
 
 /**
  * @brief The kinodynamic_constraints struct represents the kinodynamic constraints of the robot
@@ -42,7 +44,12 @@ struct KinodynamicConstraints
 public:
   Eigen::VectorXd max_vel_;
   Eigen::VectorXd max_acc_;
+
+  Eigen::VectorXd min_vel_;
+  Eigen::VectorXd min_acc_;
 };
+typedef std::shared_ptr<KinodynamicConstraints> KinodynamicConstraintsPtr;
+
 
 class TrajectoryProcessorBase;
 typedef std::shared_ptr<TrajectoryProcessorBase> TrajectoryProcessorBasePtr;
@@ -56,7 +63,7 @@ protected:
   /**
    * @brief The kinodynamics constraints of the robot to be considered for trajectory generation.
    */
-  KinodynamicConstraints kinodynamic_constraints_;
+  KinodynamicConstraintsPtr kinodynamic_constraints_;
 
   /**
    * @brief The path for which the time law is computed.
@@ -66,7 +73,7 @@ protected:
   /**
    * @brief The logger for logging purposes.
    */
-  std::deque<TrjPoint> trj_;
+  std::deque<TrjPointPtr> trj_;
 
   /**
    * @brief param_ns_ The namespace under which to read the parameters with cnr_param.
@@ -85,11 +92,10 @@ public:
    * @brief Constructors.
    */
   TrajectoryProcessorBase(){} //need init() function call afterwards
-  TrajectoryProcessorBase(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger):
+  TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger):
     kinodynamic_constraints_(constraints), param_ns_(param_ns), logger_(logger){}
-  TrajectoryProcessorBase(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path):
+  TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path):
     kinodynamic_constraints_(constraints), path_(path), param_ns_(param_ns), logger_(logger){}
-
 
   /**
    * @brief init Initializes the TrajectoryProcessor object. This function should be called when the void constructor is called and it is used mainly for plugins.
@@ -99,8 +105,8 @@ public:
    * @param path The path for which the time-law need to be computed.
    * @return
    */
-  virtual bool init(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger);
-  virtual bool init(const KinodynamicConstraints& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path);
+  virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger);
+  virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path);
 
   TrajectoryProcessorBasePtr pointer()
   {
@@ -121,7 +127,7 @@ public:
    * @brief Set the kinodynamic constraints of the robot for trajectory processing and clear the trajectory.
    * @param constraints the kinodynamic constraints
    */
-  void setConstraints(const KinodynamicConstraints constraints)
+  void setConstraints(const KinodynamicConstraintsPtr& constraints)
   {
     kinodynamic_constraints_ = constraints;
     trj_.clear();
@@ -140,7 +146,7 @@ public:
    * @brief Gets the computed trajectory.
    * @return The computed trajectory.
    */
-  const std::deque<TrjPoint>& getTrj() const
+  const std::deque<TrjPointPtr>& getTrj() const
   {
     return trj_;
   }
@@ -154,7 +160,7 @@ public:
     if(trj_.empty())
       throw std::runtime_error("trj is empty");
 
-    return trj_.back().time_from_start_;
+    return trj_.back()->time_from_start_;
   }
   /**
    * @brief Pure virtual function to compute the trajectory.
@@ -163,8 +169,8 @@ public:
    * @return True if the trajectory computation is successful, false otherwise.
    */
   virtual bool computeTrj() = 0;
-  virtual bool computeTrj(const RobotState& initial_state) = 0;
-  virtual bool computeTrj(const RobotState& initial_state, const RobotState& final_state) = 0;
+  virtual bool computeTrj(const RobotStatePtr& initial_state) = 0;
+  virtual bool computeTrj(const RobotStatePtr& initial_state, const RobotStatePtr& final_state) = 0;
 
 
   /**
@@ -174,12 +180,6 @@ public:
    * @param scaling Scaling factor for interpolation.
    * @return True if the interpolation is successful, false otherwise.
    */
-  virtual bool interpolate(const double& time, TrjPoint& pnt, const double& scaling = 1.0) = 0;
-
-  /**
-   * @brief Creates a clone of the TrajectoryProcessor object.
-   * @return A shared pointer to the cloned TrajectoryProcessor object.
-   */
-  virtual TrajectoryProcessorBasePtr clone() = 0;
+  virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& scaling = 1.0) = 0;
 };
 }
