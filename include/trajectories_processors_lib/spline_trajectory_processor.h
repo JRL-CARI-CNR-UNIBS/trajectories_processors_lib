@@ -41,13 +41,27 @@ public:
   /**
    * @brief Constructors.
    */
-  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger):
+  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints,
+                            const std::string& param_ns,
+                            const cnr_logger::TraceLoggerPtr& logger):
     TrajectoryProcessorBase(constraints,param_ns,logger){}
-  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path):
+
+  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints,
+                            const std::string& param_ns,
+                            const cnr_logger::TraceLoggerPtr& logger,
+                            const std::vector<Eigen::VectorXd>& path):
     TrajectoryProcessorBase(constraints,param_ns,logger,path){}
-  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const spline_order_t& spline_order):
+
+  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints,
+                            const std::string& param_ns,
+                            const cnr_logger::TraceLoggerPtr& logger,
+                            const spline_order_t& spline_order):
     TrajectoryProcessorBase(constraints,param_ns,logger),spline_order_(spline_order){}
-  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path,const spline_order_t& spline_order):
+
+  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints,
+                            const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger,
+                            const std::vector<Eigen::VectorXd>& path,
+                            const spline_order_t& spline_order):
     TrajectoryProcessorBase(constraints,param_ns,logger,path),spline_order_(spline_order){}
 
   /**

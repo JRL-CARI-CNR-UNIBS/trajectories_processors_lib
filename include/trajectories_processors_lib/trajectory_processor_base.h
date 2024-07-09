@@ -92,9 +92,15 @@ public:
    * @brief Constructors.
    */
   TrajectoryProcessorBase(){} //need init() function call afterwards
-  TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger):
+  TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints,
+                          const std::string& param_ns,
+                          const cnr_logger::TraceLoggerPtr& logger):
     kinodynamic_constraints_(constraints), param_ns_(param_ns), logger_(logger){}
-  TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path):
+
+  TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints,
+                          const std::string& param_ns,
+                          const cnr_logger::TraceLoggerPtr& logger,
+                          const std::vector<Eigen::VectorXd>& path):
     kinodynamic_constraints_(constraints), path_(path), param_ns_(param_ns), logger_(logger){}
 
   /**

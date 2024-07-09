@@ -16,7 +16,7 @@ void fromEigen2Vector(const Eigen::VectorXd& eigen, std::vector<double> vector)
 //  fromEigen2Vector(path_.front(),initial_state.pos_);
 
 //  TrjPoint initial_pnt;
-//  initial_pnt.state_ = std::move(initial_state);
+//  initial_pnt->state_ = std::move(initial_state);
 //  initial_pnt.time_from_start_ = 0.0;
 
 //  return computeTrj(initial_pnt);
@@ -28,7 +28,7 @@ void fromEigen2Vector(const Eigen::VectorXd& eigen, std::vector<double> vector)
 //  fromEigen2Vector(path_.back(),final_state.pos_);
 
 //  TrjPoint final_pnt;
-//  final_pnt.state_ = std::move(final_state);
+//  final_pnt->state_ = std::move(final_state);
 //  final_pnt.time_from_start_ = 0.0;
 
 //  return computeTrj(initial_pnt,final_pnt);
@@ -49,7 +49,7 @@ void fromEigen2Vector(const Eigen::VectorXd& eigen, std::vector<double> vector)
 
 //  if(spline_order_ == spline_order_t::ZERO)
 //  {
-//    if(not initial_pnt.state_.vel_.empty())
+//    if(not initial_pnt->state_->vel_.empty())
 //      CNR_WARN(logger_,"Computing the trajectory with spline order zero will discard initial velocities");
 
 //    if(kinodynamic_constraints_.max_vel_.rows() != nAx)
@@ -70,13 +70,13 @@ void fromEigen2Vector(const Eigen::VectorXd& eigen, std::vector<double> vector)
 //      }
 
 //      TrjPoint pnt;
-//      pnt.state_.pos_.resize(nAx);
-//      pnt.state_.vel_.resize(nAx);
+//      pnt->state_->pos_.resize(nAx);
+//      pnt->state_->vel_.resize(nAx);
 
 //      for(size_t iAx=0; iAx<nAx; iAx++)
 //      {
-//        pnt.state_.pos_[iAx] = path_.at(iPnt)[iAx];
-//        pnt.state_.vel_[iAx] = (path_.at(iPnt)[iAx]-path_.at(iPnt-1)[iAx])/slowest_joint_time;
+//        pnt->state_->pos_[iAx] = path_.at(iPnt)[iAx];
+//        pnt->state_->vel_[iAx] = (path_.at(iPnt)[iAx]-path_.at(iPnt-1)[iAx])/slowest_joint_time;
 //      }
 //      pnt.time_from_start_ = trj_.back().time_from_start_ + slowest_joint_time;
 //      trj_.push_back(pnt);
@@ -109,13 +109,13 @@ void fromEigen2Vector(const Eigen::VectorXd& eigen, std::vector<double> vector)
 //      }
 
 //      TrjPoint pnt;
-//      pnt.state_.pos_.resize(nAx);
-//      pnt.state_.vel_.resize(nAx);
+//      pnt->state_->pos_.resize(nAx);
+//      pnt->state_->vel_.resize(nAx);
 
 //      for(size_t iAx=0; iAx<nAx; iAx++)
 //      {
-//        pnt.state_.pos_[iAx] = path_.at(iPnt)[iAx];
-//        pnt.state_.vel_[iAx] = (path_.at(iPnt)[iAx]-path_.at(iPnt-1)[iAx])/slowest_joint_time;
+//        pnt->state_->pos_[iAx] = path_.at(iPnt)[iAx];
+//        pnt->state_->vel_[iAx] = (path_.at(iPnt)[iAx]-path_.at(iPnt-1)[iAx])/slowest_joint_time;
 //      }
 //      pnt.time_from_start_ = trj_.back().time_from_start_ + slowest_joint_time;
 //      trj_.push_back(pnt);
@@ -132,47 +132,47 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
     return false;
   }
 
-  if((time-trj_.at(0).time_from_start_)<0)
+  if((time-trj_.at(0)->time_from_start_)<0)
   {
     pnt=trj_.at(0);
-    pnt->state_->effort_.resize(trj_.at(0).state_.pos_.size(),0);
+    pnt->state_->eff_.resize(trj_.at(0)->state_->pos_.size(),0);
     return false;
   }
 
-  if ((time-trj_.back().time_from_start_)>=0)
+  if ((time-trj_.back()->time_from_start_)>=0)
   {
     pnt=trj_.back();
-    pnt->state_.effort_.resize(trj_.back().state_.pos_.size(),0);
+    pnt->state_->eff_.resize(trj_.back()->state_->pos_.size(),0);
     return true;
   }
 
   for (unsigned int iPnt=1;iPnt<trj_.size();iPnt++)
   {
-    if(((time-trj_.at(iPnt).time_from_start_)<0) && ((time-trj_.at(iPnt-1).time_from_start_)>=0))
+    if(((time-trj_.at(iPnt)->time_from_start_)<0) && ((time-trj_.at(iPnt-1)->time_from_start_)>=0))
     {
-      unsigned int nAx=trj_.at(iPnt).state_.pos_.size();
+      unsigned int nAx=trj_.at(iPnt)->state_->pos_.size();
       pnt->state_->pos_.resize(nAx,0);
       pnt->state_->vel_.resize(nAx,0);
       pnt->state_->acc_.resize(nAx,0);
-      pnt->state_->effort_.resize(nAx,0);
+      pnt->state_->eff_.resize(nAx,0);
       pnt->time_from_start_=time;
-      double delta_time=std::max(1.0e-6,(trj_.at(iPnt).time_from_start_-trj_.at(iPnt-1).time_from_start_));
-      double t=(time-trj_.at(iPnt-1).time_from_start_);
+      double delta_time=std::max(1.0e-6,(trj_.at(iPnt)->time_from_start_-trj_.at(iPnt-1)->time_from_start_));
+      double t=(time-trj_.at(iPnt-1)->time_from_start_);
       double ratio=t/delta_time;
       for (unsigned int iAx=0;iAx<nAx;iAx++)
       {
         //spline
         if(spline_order_==spline_order_t::ZERO)
         {
-          pnt->state_->pos_.at(iAx)=trj_.at(iPnt-1).state_.pos_.at(iAx)+ratio*(trj_.at(iPnt).state_.pos_.at(iAx)-trj_.at(iPnt-1).state_.pos_.at(iAx));
-          pnt->state_->vel_.at(iAx)=(trj_.at(iPnt).state_.pos_.at(iAx)-trj_.at(iPnt-1).state_.pos_.at(iAx))/delta_time;
+          pnt->state_->pos_.at(iAx)=trj_.at(iPnt-1)->state_->pos_.at(iAx)+ratio*(trj_.at(iPnt)->state_->pos_.at(iAx)-trj_.at(iPnt-1)->state_->pos_.at(iAx));
+          pnt->state_->vel_.at(iAx)=(trj_.at(iPnt)->state_->pos_.at(iAx)-trj_.at(iPnt-1)->state_->pos_.at(iAx))/delta_time;
         }
         else if (spline_order_==spline_order_t::ONE)
         {
-          double& p0_1=trj_.at(iPnt-1).state_.pos_.at(iAx);
-          double& p0_2=trj_.at(iPnt-1).state_.vel_.at(iAx);
-          double& pf_1=trj_.at(iPnt).state_.pos_.at(iAx);
-          double& pf_2=trj_.at(iPnt).state_.vel_.at(iAx);
+          double& p0_1=trj_.at(iPnt-1)->state_->pos_.at(iAx);
+          double& p0_2=trj_.at(iPnt-1)->state_->vel_.at(iAx);
+          double& pf_1=trj_.at(iPnt)->state_->pos_.at(iAx);
+          double& pf_2=trj_.at(iPnt)->state_->vel_.at(iAx);
 
           double c1 = p0_1;
           double c2 = p0_2;
@@ -185,12 +185,12 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
         }
         else if (spline_order_==spline_order_t::TWO)
         {
-          double& p0_1=trj_.at(iPnt-1).state_.pos_.at(iAx);
-          double& p0_2=trj_.at(iPnt-1).state_.vel_.at(iAx);
-          double& p0_3=trj_.at(iPnt-1).state_.acc_.at(iAx);
-          double& pf_1=trj_.at(iPnt).state_.pos_.at(iAx);
-          double& pf_2=trj_.at(iPnt).state_.vel_.at(iAx);
-          double& pf_3=trj_.at(iPnt).state_.acc_.at(iAx);
+          double& p0_1=trj_.at(iPnt-1)->state_->pos_.at(iAx);
+          double& p0_2=trj_.at(iPnt-1)->state_->vel_.at(iAx);
+          double& p0_3=trj_.at(iPnt-1)->state_->vel_.at(iAx);
+          double& pf_1=trj_.at(iPnt)->state_->pos_.at(iAx);
+          double& pf_2=trj_.at(iPnt)->state_->vel_.at(iAx);
+          double& pf_3=trj_.at(iPnt)->state_->vel_.at(iAx);
 
           double c1 = p0_1;
           double c2 = p0_2;
@@ -205,12 +205,12 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
         }
         else if (spline_order_==spline_order_t::THREE)
         {
-          double& p0_1=trj_.at(iPnt-1).state_.pos_.at(iAx);
-          double& p0_2=trj_.at(iPnt-1).state_.vel_.at(iAx);
-          double& p0_3=trj_.at(iPnt-1).state_.acc_.at(iAx);
-          double& pf_1=trj_.at(iPnt).state_.pos_.at(iAx);
-          double& pf_2=trj_.at(iPnt).state_.vel_.at(iAx);
-          double& pf_3=trj_.at(iPnt).state_.acc_.at(iAx);
+          double& p0_1=trj_.at(iPnt-1)->state_->pos_.at(iAx);
+          double& p0_2=trj_.at(iPnt-1)->state_->vel_.at(iAx);
+          double& p0_3=trj_.at(iPnt-1)->state_->vel_.at(iAx);
+          double& pf_1=trj_.at(iPnt)->state_->pos_.at(iAx);
+          double& pf_2=trj_.at(iPnt)->state_->vel_.at(iAx);
+          double& pf_3=trj_.at(iPnt)->state_->vel_.at(iAx);
           // initial and final jerks set equal to zero
 
           double c1 = p0_1;
@@ -228,12 +228,12 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
         }
         else if (spline_order_==spline_order_t::FOUR)
         {
-          double& p0_1=trj_.at(iPnt-1).state_.pos_.at(iAx);
-          double& p0_2=trj_.at(iPnt-1).state_.vel_.at(iAx);
-          double& p0_3=trj_.at(iPnt-1).state_.acc_.at(iAx);
-          double& pf_1=trj_.at(iPnt).state_.pos_.at(iAx);
-          double& pf_2=trj_.at(iPnt).state_.vel_.at(iAx);
-          double& pf_3=trj_.at(iPnt).state_.acc_.at(iAx);
+          double& p0_1=trj_.at(iPnt-1)->state_->pos_.at(iAx);
+          double& p0_2=trj_.at(iPnt-1)->state_->vel_.at(iAx);
+          double& p0_3=trj_.at(iPnt-1)->state_->vel_.at(iAx);
+          double& pf_1=trj_.at(iPnt)->state_->pos_.at(iAx);
+          double& pf_2=trj_.at(iPnt)->state_->vel_.at(iAx);
+          double& pf_3=trj_.at(iPnt)->state_->vel_.at(iAx);
           // initial and final jerks and spans set equal to zero
 
           double c1 = p0_1;
@@ -263,7 +263,7 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
 bool SplineTrajectoryProcessor::init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger)
 {
   trj_.clear();
-  path_ = nullptr;
+  path_.clear();
   logger_ = logger;
   param_ns_ = std::move(param_ns);
   kinodynamic_constraints_ = constraints;
