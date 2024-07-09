@@ -33,6 +33,12 @@ struct TrjPoint
 public:
   RobotStatePtr state_;
   double time_from_start_;
+
+  TrjPoint()
+  {
+    state_ = std::make_shared<RobotState>();
+    time_from_start_ = std::numeric_limits<double>::infinity();
+  }
 };
 typedef std::shared_ptr<TrjPoint> TrjPointPtr;
 

@@ -146,15 +146,17 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
     return true;
   }
 
+  unsigned int nAx=trj_.at(0)->state_->pos_.size();
+  std::vector<double> zeros(nAx,0.0);
+
   for (unsigned int iPnt=1;iPnt<trj_.size();iPnt++)
   {
     if(((time-trj_.at(iPnt)->time_from_start_)<0) && ((time-trj_.at(iPnt-1)->time_from_start_)>=0))
     {
-      unsigned int nAx=trj_.at(iPnt)->state_->pos_.size();
-      pnt->state_->pos_.resize(nAx,0);
-      pnt->state_->vel_.resize(nAx,0);
-      pnt->state_->acc_.resize(nAx,0);
-      pnt->state_->eff_.resize(nAx,0);
+      pnt->state_->pos_.resize(nAx,0.0);
+      pnt->state_->vel_.resize(nAx,0.0);
+      pnt->state_->acc_.resize(nAx,0.0);
+      pnt->state_->eff_.resize(nAx,0.0);
       pnt->time_from_start_=time;
       double delta_time=std::max(1.0e-6,(trj_.at(iPnt)->time_from_start_-trj_.at(iPnt-1)->time_from_start_));
       double t=(time-trj_.at(iPnt-1)->time_from_start_);
