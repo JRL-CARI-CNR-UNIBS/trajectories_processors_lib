@@ -18,12 +18,12 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(Eigen3 REQUIRED COMPONENTS Core Dense Geometry)
 find_package(cnr_logger REQUIRED)
-find_package(cnr_param REQUIRED)
 
 set(DEPS
+   Eigen3::Eigen
    cnr_logger::cnr_logger
-   cnr_param::cnr_param
 )
 
 add_library(${PROJECT_NAME} SHARED
