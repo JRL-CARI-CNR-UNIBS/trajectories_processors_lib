@@ -147,7 +147,6 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
   }
 
   unsigned int nAx=trj_.at(0)->state_->pos_.size();
-  std::vector<double> zeros(nAx,0.0);
 
   for (unsigned int iPnt=1;iPnt<trj_.size();iPnt++)
   {
