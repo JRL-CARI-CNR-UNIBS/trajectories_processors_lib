@@ -25,6 +25,20 @@ public:
 };
 typedef std::shared_ptr<RobotState> RobotStatePtr;
 
+// Overload the << operator for RobotState
+inline std::ostream& operator<<(std::ostream& os, const RobotState& state)
+{
+  os << "pos: [ ";
+  for (const auto& pos : state.pos_) os << pos << " ";
+  os << "] vel: [ ";
+  for (const auto& vel : state.vel_) os << vel << " ";
+  os << "] acc: [ ";
+  for (const auto& acc : state.acc_) os << acc << " ";
+  os << "] eff: [ ";
+  for (const auto& eff : state.eff_) os << eff << " ";
+  os << "]";
+  return os;
+}
 /**
  * @brief The TrjPoint struct represents a trajectory point, that is made up of a robot state and a time from trajectory start.
  */
@@ -42,6 +56,14 @@ public:
 };
 typedef std::shared_ptr<TrjPoint> TrjPointPtr;
 
+// Overload the << operator for TrjPoint
+inline std::ostream& operator<<(std::ostream& os, const TrjPoint& point)
+{
+  os << "time: " << point.time_from_start_ << " -> ";
+  os << *point.state_;
+  return os;
+}
+
 /**
  * @brief The kinodynamic_constraints struct represents the kinodynamic constraints of the robot
  */
@@ -56,6 +78,17 @@ public:
 };
 typedef std::shared_ptr<KinodynamicConstraints> KinodynamicConstraintsPtr;
 
+// Overload the << operator for KinodynamicConstraints
+inline std::ostream& operator<<(std::ostream& os, const KinodynamicConstraints& constraints)
+{
+  os <<    "min vel: [" << constraints.min_vel_.transpose();
+  os << " ] max vel: [" << constraints.max_vel_.transpose();
+  os << " ] min acc: [" << constraints.min_acc_.transpose();
+  os << " ] max acc: [" << constraints.max_acc_.transpose();
+  os << " ]";
+
+  return os;
+}
 
 class TrajectoryProcessorBase;
 typedef std::shared_ptr<TrajectoryProcessorBase> TrajectoryProcessorBasePtr;
@@ -77,7 +110,7 @@ protected:
   std::vector<Eigen::VectorXd> path_;
 
   /**
-   * @brief The logger for logging purposes.
+   * @brief The computed trajectory.
    */
   std::deque<TrjPointPtr> trj_;
 
@@ -194,4 +227,13 @@ public:
    */
   virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& scaling = 1.0) = 0;
 };
+
+// Overload the << operator for std::deque<TrjPointPtr>
+inline std::ostream& operator<<(std::ostream& os, const std::deque<TrjPointPtr>& trj)
+{
+  for(const TrjPointPtr& pt:trj)
+    os<<*pt<<"\n";
+  return os;
+}
+
 }
