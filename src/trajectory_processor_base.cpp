@@ -1,4 +1,4 @@
-#include <trajectories_processors_lib/trajectory_processor_base.h>
+#include <openmore/trajectories_processors/trajectory_processor_base.h>
 
 namespace trajectories_processors
 {

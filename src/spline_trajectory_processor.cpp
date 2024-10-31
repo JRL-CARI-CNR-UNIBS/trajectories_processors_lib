@@ -1,4 +1,4 @@
-#include <trajectories_processors_lib/spline_trajectory_processor.h>
+#include <openmore/trajectories_processors/spline_trajectory_processor.h>
 
 namespace trajectories_processors
 {

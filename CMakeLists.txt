@@ -37,7 +37,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${DEPS})
 add_library("${PROJECT_NAME}::${PROJECT_NAME}" ALIAS ${PROJECT_NAME})
 
 # Install
-install(DIRECTORY include/
+install(DIRECTORY include/openmore
   DESTINATION include)
 
 install(
