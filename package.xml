@@ -13,7 +13,8 @@
 <buildtool_depend condition="$ROS_VERSION != 1">cmake</buildtool_depend>
 
 <depend>eigen3</depend>
-<depend>graph_core</depend>
+<depend>cnr_logger</depend>
+<depend>cnr_param</depend>
 
 <export>
     <build_type condition="$ROS_VERSION == 1">catkin</build_type>

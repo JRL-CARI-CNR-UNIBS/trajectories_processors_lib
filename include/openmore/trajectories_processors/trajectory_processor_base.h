@@ -1,7 +1,8 @@
 #pragma once
 
+#include <Eigen/Core>
+#include <cnr_param/cnr_param.h>
 #include <cnr_logger/cnr_logger.h>
-#include <graph_core/graph/path.h>
 
 /**
  * @file TrajectoryProcessorBase.h
@@ -10,7 +11,6 @@
 
 namespace trajectories_processors
 {
-using namespace graph::core;
 
 /**
  * @brief The RobotState struct represents a robot state, that is robot position, velocity, acceleration and effort.
