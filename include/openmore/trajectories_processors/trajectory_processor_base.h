@@ -9,7 +9,7 @@
  * @brief Contains the declaration of the TrajectoryProcessorBase class and related structures.
  */
 
-namespace trajectories_processors
+namespace openmore
 {
 
 /**
@@ -70,22 +70,66 @@ inline std::ostream& operator<<(std::ostream& os, const TrjPoint& point)
 struct KinodynamicConstraints
 {
 public:
+  Eigen::VectorXd max_pos_;
   Eigen::VectorXd max_vel_;
   Eigen::VectorXd max_acc_;
+  Eigen::VectorXd max_eff_;
 
+  Eigen::VectorXd min_pos_;
   Eigen::VectorXd min_vel_;
   Eigen::VectorXd min_acc_;
+  Eigen::VectorXd min_eff_;
 };
 typedef std::shared_ptr<KinodynamicConstraints> KinodynamicConstraintsPtr;
 
 // Overload the << operator for KinodynamicConstraints
 inline std::ostream& operator<<(std::ostream& os, const KinodynamicConstraints& constraints)
 {
-  os <<    "min vel: [" << constraints.min_vel_.transpose();
-  os << " ] max vel: [" << constraints.max_vel_.transpose();
-  os << " ] min acc: [" << constraints.min_acc_.transpose();
-  os << " ] max acc: [" << constraints.max_acc_.transpose();
-  os << " ]";
+  // Position limits
+  if(constraints.min_pos_.cols()!=0)
+    os << "min pos: [" << constraints.min_pos_.transpose();
+  else
+    os << "min pos: [n.d.";
+
+  if(constraints.max_pos_.cols()!=0)
+    os << "] max pos: [" << constraints.max_pos_.transpose();
+  else
+    os << "] max pos: [n.d.";
+
+  // Velocity limits
+  if(constraints.min_vel_.cols()!=0)
+    os << "]\nmin vel: [" << constraints.min_vel_.transpose();
+  else
+    os << "]\nmin vel: [n.d.";
+
+  if(constraints.max_vel_.cols()!=0)
+    os << "] max vel: [" << constraints.max_vel_.transpose();
+  else
+    os << "] max vel: [n.d.";
+
+  // Acceleration limits
+  if(constraints.min_acc_.cols()!=0)
+    os << "]\nmin acc: [" << constraints.min_acc_.transpose();
+  else
+    os << "]\nmin acc: [n.d.";
+
+  if(constraints.max_acc_.cols()!=0)
+    os << "] max acc: [" << constraints.max_acc_.transpose();
+  else
+    os << "] max acc: [n.d.";
+
+  // Effort limits
+  if(constraints.min_eff_.cols()!=0)
+    os << "]\nmin eff: [" << constraints.min_eff_.transpose();
+  else
+    os << "]\nmin eff: [n.d.";
+
+  if(constraints.max_eff_.cols()!=0)
+    os << "] max eff: [" << constraints.max_eff_.transpose();
+  else
+    os << "] max eff: [n.d.";
+
+  os << "]";
 
   return os;
 }

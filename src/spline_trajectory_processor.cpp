@@ -1,6 +1,6 @@
 #include <openmore/trajectories_processors/spline_trajectory_processor.h>
 
-namespace trajectories_processors
+namespace openmore
 {
 
 void fromEigen2Vector(const Eigen::VectorXd& eigen, std::vector<double> vector)
@@ -9,120 +9,6 @@ void fromEigen2Vector(const Eigen::VectorXd& eigen, std::vector<double> vector)
   vector.resize(eigen.rows());
   Eigen::VectorXd::Map(&vector[0], eigen.rows()) = eigen;
 }
-
-//bool SplineTrajectoryProcessor::computeTrj()
-//{
-//  robot_state initial_state;
-//  fromEigen2Vector(path_.front(),initial_state.pos_);
-
-//  TrjPoint initial_pnt;
-//  initial_pnt->state_ = std::move(initial_state);
-//  initial_pnt.time_from_start_ = 0.0;
-
-//  return computeTrj(initial_pnt);
-//}
-
-//bool SplineTrajectoryProcessor::computeTrj(const TrjPoint& initial_pnt)
-//{
-//  robot_state final_state;
-//  fromEigen2Vector(path_.back(),final_state.pos_);
-
-//  TrjPoint final_pnt;
-//  final_pnt->state_ = std::move(final_state);
-//  final_pnt.time_from_start_ = 0.0;
-
-//  return computeTrj(initial_pnt,final_pnt);
-//}
-
-//bool SplineTrajectoryProcessor::computeTrj(const TrjPoint& initial_pnt,const TrjPoint& final_pnt)
-//{
-//  if(path_.empty() or path_.size() == 1)
-//  {
-//    CNR_ERROR(logger_,"Path is empty or it is a single point");
-//    return false;
-//  }
-
-//  size_t nAx = path_.front().rows();
-
-//  trj_.clear();
-//  trj_.push_back(initial_pnt);
-
-//  if(spline_order_ == spline_order_t::ZERO)
-//  {
-//    if(not initial_pnt->state_->vel_.empty())
-//      CNR_WARN(logger_,"Computing the trajectory with spline order zero will discard initial velocities");
-
-//    if(kinodynamic_constraints_.max_vel_.rows() != nAx)
-//    {
-//      CNR_ERROR(logger_,"To compute a trajectory with spline order zero the velocities constraints must be defined");
-//      return false;
-//    }
-
-//    double joint_time, slowest_joint_time;
-//    for(size_t iPnt=1; iPnt<path_.size(); iPnt++)
-//    {
-//      slowest_joint_time = 0.0;
-//      for(size_t iAx=0; iAx<nAx; iAx++)
-//      {
-//        joint_time = std::abs((path_.at(iPnt)[iAx]-path_.at(iPnt-1)[iAx])/kinodynamic_constraints_.max_vel_[iAx]);
-//        if(joint_time>slowest_joint_time)
-//          slowest_joint_time = std::move(joint_time);
-//      }
-
-//      TrjPoint pnt;
-//      pnt->state_->pos_.resize(nAx);
-//      pnt->state_->vel_.resize(nAx);
-
-//      for(size_t iAx=0; iAx<nAx; iAx++)
-//      {
-//        pnt->state_->pos_[iAx] = path_.at(iPnt)[iAx];
-//        pnt->state_->vel_[iAx] = (path_.at(iPnt)[iAx]-path_.at(iPnt-1)[iAx])/slowest_joint_time;
-//      }
-//      pnt.time_from_start_ = trj_.back().time_from_start_ + slowest_joint_time;
-//      trj_.push_back(pnt);
-//    }
-//  }
-
-//  if(spline_order_ == spline_order_t::ONE)
-//  {
-//    if(kinodynamic_constraints_.max_vel_.rows() != nAx)
-//    {
-//      CNR_ERROR(logger_,"To compute a trajectory with spline_order_ == spline_order_t::ZERO, the velocities constraint must be defined");
-//      return false;
-//    }
-
-//    if(kinodynamic_constraints_.max_acc_.rows() != nAx)
-//    {
-//      CNR_ERROR(logger_,"To compute a trajectory with spline_order_ == spline_order_t::ONE, the accelerations constraint must be defined");
-//      return false;
-//    }
-
-//    double joint_time, slowest_joint_time;
-//    for(size_t iPnt=1; iPnt<path_.size(); iPnt++)
-//    {
-//      slowest_joint_time = 0.0;
-//      for(size_t iAx=0; iAx<nAx; iAx++)
-//      {
-//        joint_time = std::abs((path_.at(iPnt)[iAx]-path_.at(iPnt-1)[iAx])/kinodynamic_constraints_.max_vel_[iAx]);
-//        if(joint_time>slowest_joint_time)
-//          slowest_joint_time = std::move(joint_time);
-//      }
-
-//      TrjPoint pnt;
-//      pnt->state_->pos_.resize(nAx);
-//      pnt->state_->vel_.resize(nAx);
-
-//      for(size_t iAx=0; iAx<nAx; iAx++)
-//      {
-//        pnt->state_->pos_[iAx] = path_.at(iPnt)[iAx];
-//        pnt->state_->vel_[iAx] = (path_.at(iPnt)[iAx]-path_.at(iPnt-1)[iAx])/slowest_joint_time;
-//      }
-//      pnt.time_from_start_ = trj_.back().time_from_start_ + slowest_joint_time;
-//      trj_.push_back(pnt);
-//    }
-//  }
-//}
-
 
 bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt, const double& scaling)
 {

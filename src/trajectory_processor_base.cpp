@@ -1,6 +1,6 @@
 #include <openmore/trajectories_processors/trajectory_processor_base.h>
 
-namespace trajectories_processors
+namespace openmore
 {
 bool TrajectoryProcessorBase::init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger)
 {

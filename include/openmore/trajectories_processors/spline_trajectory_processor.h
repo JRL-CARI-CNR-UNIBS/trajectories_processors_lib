@@ -7,7 +7,7 @@
  * @brief Contains the declaration of the SplineTrajectoryProcessor class.
  */
 
-namespace trajectories_processors
+namespace openmore
 {
 class SplineTrajectoryProcessor;
 typedef std::shared_ptr<SplineTrajectoryProcessor> SplineTrajectoryProcessorPtr;
