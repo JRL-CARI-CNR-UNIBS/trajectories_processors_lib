@@ -109,8 +109,8 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
           double c7 = 1.0/(delta_time*delta_time*delta_time*delta_time*delta_time*delta_time)*(p0_1*1.4E2-pf_1*1.4E2+delta_time*p0_2*7.2E1+delta_time*pf_2*6.8E1+(delta_time*delta_time)*p0_3*1.5E1-(delta_time*delta_time)*pf_3*1.3E1)*(-1.0/2.0);
           double c8 = 1.0/(delta_time*delta_time*delta_time*delta_time*delta_time*delta_time*delta_time)*(p0_1*1.0E1-pf_1*1.0E1+delta_time*p0_2*5.0+delta_time*pf_2*5.0+(delta_time*delta_time)*p0_3-(delta_time*delta_time)*pf_3)*2.0;
 
-          pnt->state_->pos_.at(iAx)     = c1+c2*t+c3*(t*t)+c4*(t*t*t)+c5*(t*t*t*t)+c6*(t*t*t*t*t)+c7*(t*t*t*t*t*t)+c8*(t*t*t*t*t*t*t);
-          pnt->state_->vel_.at(iAx)    = c2+c3*t*2.0+c4*(t*t)*3.0+c5*(t*t*t)*4.0+c6*(t*t*t*t)*5.0+c7*(t*t*t*t*t)*6.0+c8*(t*t*t*t*t*t)*7.0;
+          pnt->state_->pos_.at(iAx) = c1+c2*t+c3*(t*t)+c4*(t*t*t)+c5*(t*t*t*t)+c6*(t*t*t*t*t)+c7*(t*t*t*t*t*t)+c8*(t*t*t*t*t*t*t);
+          pnt->state_->vel_.at(iAx) = c2+c3*t*2.0+c4*(t*t)*3.0+c5*(t*t*t)*4.0+c6*(t*t*t*t)*5.0+c7*(t*t*t*t*t)*6.0+c8*(t*t*t*t*t*t)*7.0;
           pnt->state_->acc_.at(iAx) = c3*2.0+c4*t*6.0+c5*(t*t)*1.2E1+c6*(t*t*t)*2.0E1+c7*(t*t*t*t)*3.0E1+c8*(t*t*t*t*t)*4.2E1;
         }
         else if (spline_order_==spline_order_t::FOUR)
@@ -134,11 +134,11 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
           double c9 = 1.0/(delta_time*delta_time*delta_time*delta_time*delta_time*delta_time*delta_time*delta_time)*(p0_1*1.26E2-pf_1*1.26E2+delta_time*p0_2*6.4E1+delta_time*pf_2*6.2E1+(delta_time*delta_time)*p0_3*1.4E1-(delta_time*delta_time)*pf_3*1.3E1)*(5.0/2.0);
           double c10 = 1.0/(delta_time*delta_time*delta_time*delta_time*delta_time*delta_time*delta_time*delta_time*delta_time)*(p0_1*2.8E1-pf_1*2.8E1+delta_time*p0_2*1.4E1+delta_time*pf_2*1.4E1+(delta_time*delta_time)*p0_3*3.0-(delta_time*delta_time)*pf_3*3.0)*(-5.0/2.0);
 
-          pnt->state_->pos_.at(iAx)     = c1+c2*t+c3*(t*t)+c4*(t*t*t)+c5*(t*t*t*t)+c6*(t*t*t*t*t)+c7*(t*t*t*t*t*t)+c8*(t*t*t*t*t*t*t)+c9*(t*t*t*t*t*t*t*t)+c10*(t*t*t*t*t*t*t*t*t);
-          pnt->state_->vel_.at(iAx)    = c2+c3*t*2.0+c4*(t*t)*3.0+c5*(t*t*t)*4.0+c6*(t*t*t*t)*5.0+c7*(t*t*t*t*t)*6.0+c8*(t*t*t*t*t*t)*7.0+c9*(t*t*t*t*t*t*t)*8.0+c10*(t*t*t*t*t*t*t*t)*9.0;
+          pnt->state_->pos_.at(iAx) = c1+c2*t+c3*(t*t)+c4*(t*t*t)+c5*(t*t*t*t)+c6*(t*t*t*t*t)+c7*(t*t*t*t*t*t)+c8*(t*t*t*t*t*t*t)+c9*(t*t*t*t*t*t*t*t)+c10*(t*t*t*t*t*t*t*t*t);
+          pnt->state_->vel_.at(iAx) = c2+c3*t*2.0+c4*(t*t)*3.0+c5*(t*t*t)*4.0+c6*(t*t*t*t)*5.0+c7*(t*t*t*t*t)*6.0+c8*(t*t*t*t*t*t)*7.0+c9*(t*t*t*t*t*t*t)*8.0+c10*(t*t*t*t*t*t*t*t)*9.0;
           pnt->state_->acc_.at(iAx) = c3*2.0+c4*t*6.0+c5*(t*t)*1.2E1+c6*(t*t*t)*2.0E1+c7*(t*t*t*t)*3.0E1+c8*(t*t*t*t*t)*4.2E1+c9*(t*t*t*t*t*t)*5.6E1+c10*(t*t*t*t*t*t*t)*7.2E1;
         }
-        pnt->state_->vel_.at(iAx)    *= scaling ;
+        pnt->state_->vel_.at(iAx) *= scaling ;
         pnt->state_->acc_.at(iAx) *= scaling*scaling;
       }
       break;
