@@ -74,10 +74,10 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
         {
           double& p0_1=trj_.at(iPnt-1)->state_->pos_.at(iAx);
           double& p0_2=trj_.at(iPnt-1)->state_->vel_.at(iAx);
-          double& p0_3=trj_.at(iPnt-1)->state_->vel_.at(iAx);
+          double& p0_3=trj_.at(iPnt-1)->state_->acc_.at(iAx);
           double& pf_1=trj_.at(iPnt)->state_->pos_.at(iAx);
           double& pf_2=trj_.at(iPnt)->state_->vel_.at(iAx);
-          double& pf_3=trj_.at(iPnt)->state_->vel_.at(iAx);
+          double& pf_3=trj_.at(iPnt)->state_->acc_.at(iAx);
 
           double c1 = p0_1;
           double c2 = p0_2;
@@ -86,18 +86,18 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
           double c5 = 1.0/(delta_time*delta_time*delta_time*delta_time)*(p0_1*3.0E1-pf_1*3.0E1+delta_time*p0_2*1.6E1+delta_time*pf_2*1.4E1+(delta_time*delta_time)*p0_3*3.0-(delta_time*delta_time)*pf_3*2.0)*(1.0/2.0);
           double c6 = 1.0/(delta_time*delta_time*delta_time*delta_time*delta_time)*(p0_1*1.2E1-pf_1*1.2E1+delta_time*p0_2*6.0+delta_time*pf_2*6.0+(delta_time*delta_time)*p0_3-(delta_time*delta_time)*pf_3)*(-1.0/2.0);
 
-          pnt->state_->pos_.at(iAx)     = c1+c2*t+c3*(t*t)+c4*(t*t*t)+c5*(t*t*t*t)+c6*(t*t*t*t*t);
-          pnt->state_->vel_.at(iAx)    = c2+c3*t*2.0+c4*(t*t)*3.0+c5*(t*t*t)*4.0+c6*(t*t*t*t)*5.0;
+          pnt->state_->pos_.at(iAx) = c1+c2*t+c3*(t*t)+c4*(t*t*t)+c5*(t*t*t*t)+c6*(t*t*t*t*t);
+          pnt->state_->vel_.at(iAx) = c2+c3*t*2.0+c4*(t*t)*3.0+c5*(t*t*t)*4.0+c6*(t*t*t*t)*5.0;
           pnt->state_->acc_.at(iAx) = c3*2.0+c4*t*6.0+c5*(t*t)*1.2E1+c6*(t*t*t)*2.0E1;
         }
         else if (spline_order_==spline_order_t::THREE)
         {
           double& p0_1=trj_.at(iPnt-1)->state_->pos_.at(iAx);
           double& p0_2=trj_.at(iPnt-1)->state_->vel_.at(iAx);
-          double& p0_3=trj_.at(iPnt-1)->state_->vel_.at(iAx);
+          double& p0_3=trj_.at(iPnt-1)->state_->acc_.at(iAx);
           double& pf_1=trj_.at(iPnt)->state_->pos_.at(iAx);
           double& pf_2=trj_.at(iPnt)->state_->vel_.at(iAx);
-          double& pf_3=trj_.at(iPnt)->state_->vel_.at(iAx);
+          double& pf_3=trj_.at(iPnt)->state_->acc_.at(iAx);
           // initial and final jerks set equal to zero
 
           double c1 = p0_1;
@@ -117,10 +117,10 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
         {
           double& p0_1=trj_.at(iPnt-1)->state_->pos_.at(iAx);
           double& p0_2=trj_.at(iPnt-1)->state_->vel_.at(iAx);
-          double& p0_3=trj_.at(iPnt-1)->state_->vel_.at(iAx);
+          double& p0_3=trj_.at(iPnt-1)->state_->acc_.at(iAx);
           double& pf_1=trj_.at(iPnt)->state_->pos_.at(iAx);
           double& pf_2=trj_.at(iPnt)->state_->vel_.at(iAx);
-          double& pf_3=trj_.at(iPnt)->state_->vel_.at(iAx);
+          double& pf_3=trj_.at(iPnt)->state_->acc_.at(iAx);
           // initial and final jerks and spans set equal to zero
 
           double c1 = p0_1;
