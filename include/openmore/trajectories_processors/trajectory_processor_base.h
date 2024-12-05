@@ -301,10 +301,12 @@ public:
    * @brief Pure virtual function to interpolate a trajectory point.
    * @param time The time at which to interpolate.
    * @param pnt The interpolated trajectory point.
-   * @param scaling Scaling factor for interpolation.
+   * @param target_scaling Target scaling factor used for the interpolation.
+   * @param updated_scaling Actual scaling factor used for the interpolation. It should always be <= target_scaling.
    * @return True if the interpolation is successful, false otherwise.
    */
-  virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& scaling = 1.0) = 0;
+  virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling, double& updated_scaling) = 0;
+  virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling) = 0;
 };
 
 // Overload the << operator for std::deque<TrjPointPtr>

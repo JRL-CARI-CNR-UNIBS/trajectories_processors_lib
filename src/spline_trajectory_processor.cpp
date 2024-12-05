@@ -45,8 +45,17 @@ void fromEigen2Vector(const Eigen::VectorXd& eigen, std::vector<double> vector)
   Eigen::VectorXd::Map(&vector[0], eigen.rows()) = eigen;
 }
 
-bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt, const double& scaling)
+bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling)
 {
+  double updated_scaling;
+  return interpolate(time,pnt,target_scaling,updated_scaling);
+}
+
+bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling, double& updated_scaling)
+{
+  // Spline interpolator uses the target scaling factor
+  updated_scaling = target_scaling;
+
   if(trj_.empty())
   {
     CNR_ERROR(logger_,"Trajectory is empty or it has not been computed yet");
@@ -173,8 +182,8 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
           pnt->state_->vel_.at(iAx) = c2+c3*t*2.0+c4*(t*t)*3.0+c5*(t*t*t)*4.0+c6*(t*t*t*t)*5.0+c7*(t*t*t*t*t)*6.0+c8*(t*t*t*t*t*t)*7.0+c9*(t*t*t*t*t*t*t)*8.0+c10*(t*t*t*t*t*t*t*t)*9.0;
           pnt->state_->acc_.at(iAx) = c3*2.0+c4*t*6.0+c5*(t*t)*1.2E1+c6*(t*t*t)*2.0E1+c7*(t*t*t*t)*3.0E1+c8*(t*t*t*t*t)*4.2E1+c9*(t*t*t*t*t*t)*5.6E1+c10*(t*t*t*t*t*t*t)*7.2E1;
         }
-        pnt->state_->vel_.at(iAx) *= scaling ;
-        pnt->state_->acc_.at(iAx) *= scaling*scaling;
+        pnt->state_->vel_.at(iAx) *= updated_scaling;
+        pnt->state_->acc_.at(iAx) *= updated_scaling*updated_scaling;
       }
       break;
     }
