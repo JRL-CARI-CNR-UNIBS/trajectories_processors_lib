@@ -62,7 +62,14 @@ public:
    *        - THREE: jerk continuous
    *        - FOUR: snap continuous
    */
-  enum class spline_order_t {ZERO, ONE, TWO, THREE, FOUR};
+  enum class spline_order_t
+  {
+    ZERO  = 0,
+    ONE   = 1,
+    TWO   = 2,
+    THREE = 3,
+    FOUR  = 4
+  };
 
 protected:
   /**
