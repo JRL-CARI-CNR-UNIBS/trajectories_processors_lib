@@ -81,7 +81,7 @@ struct TrjPoint
 {
 public:
   RobotStatePtr state_;
-  double time_from_start_;
+  double time_from_start_ = std::numeric_limits<double>::infinity();
 
   TrjPoint()
   {
@@ -286,6 +286,17 @@ public:
 
     return trj_.back()->time_from_start_;
   }
+
+  /**
+   *@brief Write the std::deque<TrjPointPtr> trj_ to a YAML::Node.
+   *
+   * This function converts the computed trajectory to a YAML::Node.
+   * It creates a YAML object containing positions, velocities, acccelerations, efforts and times as sequences.
+   *
+   * @return A YAML::Node representing the trajectory.
+   */
+  YAML::Node toYAML() const;
+
   /**
    * @brief Pure virtual function to compute the trajectory.
    * @param initial_state The initial robot state.
@@ -295,7 +306,6 @@ public:
   virtual bool computeTrj() = 0;
   virtual bool computeTrj(const RobotStatePtr& initial_state) = 0;
   virtual bool computeTrj(const RobotStatePtr& initial_state, const RobotStatePtr& final_state) = 0;
-
 
   /**
    * @brief Pure virtual function to interpolate a trajectory point.
@@ -316,5 +326,7 @@ inline std::ostream& operator<<(std::ostream& os, const std::deque<TrjPointPtr>&
     os<<*pt<<"\n";
   return os;
 }
+
+std::deque<TrjPointPtr> trjFromYAML(const YAML::Node& yaml);
 
 }

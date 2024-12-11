@@ -18,6 +18,9 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+#Options
+option(ADD_CUSTOM_UNINSTALL "Add uninstall target" ON)
+
 find_package(Eigen3 REQUIRED COMPONENTS Core Dense Geometry)
 find_package(cnr_logger REQUIRED)
 find_package(cnr_param REQUIRED)
@@ -72,3 +75,16 @@ install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
   DESTINATION "share/${PROJECT_NAME}/cmake")
+
+# make uninstall
+if(ADD_CUSTOM_UNINSTALL)
+    message(STATUS "Adding custom uninstall")
+    add_custom_target("uninstall" COMMENT "Uninstall installed files")
+    add_custom_command(
+        TARGET "uninstall"
+        POST_BUILD
+        COMMENT "Uninstall files with install_manifest.txt"
+        COMMAND xargs rm -vf < install_manifest.txt || echo Nothing in
+        install_manifest.txt to be uninstalled!
+        )
+endif()
