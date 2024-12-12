@@ -53,14 +53,19 @@ namespace openmore
 struct RobotState
 {
 public:
-  std::vector<double> pos_;
-  std::vector<double> vel_;
-  std::vector<double> acc_;
-  std::vector<double> eff_;
+  std::vector<double> pos_; /**< Robot's position. */
+  std::vector<double> vel_; /**< Robot's velocity. */
+  std::vector<double> acc_; /**< Robot's acceleration. */
+  std::vector<double> eff_; /**< Robot's effort. */
 };
 typedef std::shared_ptr<RobotState> RobotStatePtr;
 
-// Overload the << operator for RobotState
+/**
+ * @brief Overloads the << operator for RobotState for printing.
+ * @param os The output stream.
+ * @param state The RobotState object.
+ * @return The modified output stream.
+ */
 inline std::ostream& operator<<(std::ostream& os, const RobotState& state)
 {
   os << "pos: [ ";
@@ -75,14 +80,18 @@ inline std::ostream& operator<<(std::ostream& os, const RobotState& state)
   return os;
 }
 /**
- * @brief The TrjPoint struct represents a trajectory point, that is made up of a robot state and a time from trajectory start.
+ * @brief The TrjPoint struct represents a trajectory point consisting of a robot state and a timestamp from the start of the trajectory.
  */
 struct TrjPoint
 {
 public:
-  RobotStatePtr state_;
-  double time_from_start_ = std::numeric_limits<double>::infinity();
+  RobotStatePtr state_; /**< The robot state at the trajectory point. */
+  double time_from_start_; /**< Time from the start of the trajectory. */
 
+  /**
+   * @brief Default constructor.
+   * Initializes the state and sets the time to infinity (default value).
+   */
   TrjPoint()
   {
     state_ = std::make_shared<RobotState>();
@@ -91,7 +100,12 @@ public:
 };
 typedef std::shared_ptr<TrjPoint> TrjPointPtr;
 
-// Overload the << operator for TrjPoint
+/**
+ * @brief Overloads the << operator for TrjPoint for printing.
+ * @param os The output stream.
+ * @param point The TrjPoint object.
+ * @return The modified output stream.
+ */
 inline std::ostream& operator<<(std::ostream& os, const TrjPoint& point)
 {
   os << "time: " << point.time_from_start_ << " -> ";
@@ -100,24 +114,29 @@ inline std::ostream& operator<<(std::ostream& os, const TrjPoint& point)
 }
 
 /**
- * @brief The kinodynamic_constraints struct represents the kinodynamic constraints of the robot
+ * @brief The kinodynamic_constraints struct represents the kinodynamic constraints of the robot,  including limits for position, velocity, acceleration, and effort.
  */
 struct KinodynamicConstraints
 {
 public:
-  Eigen::VectorXd max_pos_;
-  Eigen::VectorXd max_vel_;
-  Eigen::VectorXd max_acc_;
-  Eigen::VectorXd max_eff_;
+  Eigen::VectorXd max_pos_; /**< Maximum position limits. */
+  Eigen::VectorXd max_vel_; /**< Maximum velocity limits. */
+  Eigen::VectorXd max_acc_; /**< Maximum acceleration limits. */
+  Eigen::VectorXd max_eff_; /**< Maximum effort limits. */
 
-  Eigen::VectorXd min_pos_;
-  Eigen::VectorXd min_vel_;
-  Eigen::VectorXd min_acc_;
-  Eigen::VectorXd min_eff_;
+  Eigen::VectorXd min_pos_; /**< Minimum position limits. */
+  Eigen::VectorXd min_vel_; /**< Minimum velocity limits. */
+  Eigen::VectorXd min_acc_; /**< Minimum acceleration limits. */
+  Eigen::VectorXd min_eff_; /**< Minimum effort limits. */
 };
 typedef std::shared_ptr<KinodynamicConstraints> KinodynamicConstraintsPtr;
 
-// Overload the << operator for KinodynamicConstraints
+/**
+ * @brief Overloads the << operator for KinodynamicConstraints for printing.
+ * @param os The output stream.
+ * @param constraints The KinodynamicConstraints object.
+ * @return The modified output stream.
+ */
 inline std::ostream& operator<<(std::ostream& os, const KinodynamicConstraints& constraints)
 {
   // Position limits
@@ -173,13 +192,13 @@ class TrajectoryProcessorBase;
 typedef std::shared_ptr<TrajectoryProcessorBase> TrajectoryProcessorBasePtr;
 
 /**
- * @brief The TrajectoryProcessorBase class provides a base for processing trajectories.
+ * @brief The TrajectoryProcessorBase class provides a base class for processing trajectories.
  */
 class TrajectoryProcessorBase: public std::enable_shared_from_this<TrajectoryProcessorBase>
 {
 protected:
   /**
-   * @brief The kinodynamics constraints of the robot to be considered for trajectory generation.
+   * @brief Robot's kinodynamic constraints.
    */
   KinodynamicConstraintsPtr kinodynamic_constraints_;
 
@@ -194,12 +213,12 @@ protected:
   std::deque<TrjPointPtr> trj_;
 
   /**
-   * @brief param_ns_ The namespace under which to read the parameters with cnr_param.
+   * @brief Namespace for parameter retrieval using cnr_param.
    */
   std::string param_ns_;
 
   /**
-   * @brief logger_ the logger for logging purposes.
+   * @brief Logger for debugging and tracing.
    */
   cnr_logger::TraceLoggerPtr logger_;
 
@@ -207,14 +226,29 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   /**
-   * @brief Constructors.
+   * @brief Default constructor.
+   * Requires a call to init() aftwrwards.
    */
-  TrajectoryProcessorBase(){} //need init() function call afterwards
+  TrajectoryProcessorBase(){}
+
+  /**
+   * @brief Parameterized constructor.
+   * @param constraints Kinodynamic constraints.
+   * @param param_ns Parameter namespace.
+   * @param logger Logger instance.
+   */
   TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints,
                           const std::string& param_ns,
                           const cnr_logger::TraceLoggerPtr& logger):
     kinodynamic_constraints_(constraints), param_ns_(param_ns), logger_(logger){}
 
+  /**
+   * @brief Constructor with path initialization.
+   * @param constraints Kinodynamic constraints.
+   * @param param_ns Parameter namespace.
+   * @param logger Logger instance.
+   * @param path Path for time-law computation.
+   */
   TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints,
                           const std::string& param_ns,
                           const cnr_logger::TraceLoggerPtr& logger,
@@ -222,24 +256,34 @@ public:
     kinodynamic_constraints_(constraints), path_(path), param_ns_(param_ns), logger_(logger){}
 
   /**
-   * @brief init Initializes the TrajectoryProcessor object. This function should be called when the void constructor is called and it is used mainly for plugins.
-   * @param constraints The kinodynamics constraints of the robot to be considered for trajectory generation.
-   * @param param_ns_ The namespace under which to read the parameters with cnr_param.
-   * @param logger The logger for logging purposes.
-   * @param path The path for which the time-law need to be computed.
-   * @return
+   * @brief Initializes the TrajectoryProcessor object with a predefined path.
+   *
+   * This function should be called when the default constructor is used. It initializes the object with a specific path and constraints.
+   *
+   * @param constraints The kinodynamic constraints of the robot to be used for trajectory generation.
+   * @param param_ns The namespace from which to read parameters using cnr_param.
+   * @param logger The logger instance for debugging and tracing.
+   * @param path The predefined path for time-law computation.
+   * @return True if initialization is successful, false otherwise.
    */
   virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger);
   virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path);
 
+  /**
+   * @brief Returns a shared pointer to the current instance.
+   * @return A shared pointer to this TrajectoryProcessorBase instance.
+   */
   TrajectoryProcessorBasePtr pointer()
   {
     return shared_from_this();
   }
 
   /**
-   * @brief Sets the path and clears the trajectory.
-   * @param path The path for which the time-law need to be computed.
+   * @brief Sets the path and clears the existing trajectory.
+   *
+   * This function updates the path used for trajectory computation and clears any previously computed trajectory.
+   *
+   * @param path The new path for which the time-law needs to be computed.
    */
   void setPath(const std::vector<Eigen::VectorXd>& path)
   {
@@ -248,8 +292,9 @@ public:
   }
 
   /**
-   * @brief Set the kinodynamic constraints of the robot for trajectory processing and clear the trajectory.
-   * @param constraints the kinodynamic constraints
+   * @brief Sets the kinodynamic constraints of the robot and clears the existing trajectory.
+   *
+   * @param constraints The new kinodynamic constraints for trajectory processing.
    */
   void setConstraints(const KinodynamicConstraintsPtr& constraints)
   {
@@ -258,8 +303,8 @@ public:
   }
 
   /**
-   * @brief Gets the path.
-   * @return The path.
+   * @brief Gets the current path.
+   * @return The current path as a vector of Eigen::VectorXd.
    */
   const std::vector<Eigen::VectorXd>& getPath() const
   {
@@ -268,7 +313,7 @@ public:
 
   /**
    * @brief Gets the computed trajectory.
-   * @return The computed trajectory.
+   * @return The computed trajectory as a deque of trajectory points (TrjPointPtr).
    */
   const std::deque<TrjPointPtr>& getTrj() const
   {
@@ -276,8 +321,10 @@ public:
   }
 
   /**
-   * @brief Return the duration of the trajectory
-   * @return The trajectory duration.
+   * @brief Returns the duration of the computed trajectory.
+   *
+   * @return The duration of the trajectory.
+   * @throws std::runtime_error if the trajectory is empty.
    */
   const double& getTrjDuration() const
   {
@@ -288,19 +335,20 @@ public:
   }
 
   /**
-   *@brief Write the std::deque<TrjPointPtr> trj_ to a YAML::Node.
+   * @brief Converts the computed trajectory to a YAML node.
    *
-   * This function converts the computed trajectory to a YAML::Node.
-   * It creates a YAML object containing positions, velocities, acccelerations, efforts and times as sequences.
+   * This function generates a YAML::Node representing the trajectory, including positions, velocities, accelerations, efforts, and timestamps.
    *
-   * @return A YAML::Node representing the trajectory.
+   * @return A YAML::Node containing the trajectory data.
+   * @throws std::runtime_error if mandatory data (e.g., position or time) is missing.
    */
   YAML::Node toYAML() const;
 
   /**
    * @brief Pure virtual function to compute the trajectory.
-   * @param initial_state The initial robot state.
-   * @param final_state The final robot state.
+   *
+   * @param initial_state The initial state of the robot.
+   * @param final_state The final state of the robot.
    * @return True if the trajectory computation is successful, false otherwise.
    */
   virtual bool computeTrj(const RobotStatePtr& initial_state, const RobotStatePtr& final_state) = 0;
@@ -308,11 +356,12 @@ public:
   virtual bool computeTrj();
 
   /**
-   * @brief Pure virtual function to interpolate a trajectory point.
+   * @brief Pure virtual function to interpolate a trajectory point at a given time.
+   *
    * @param time The time at which to interpolate.
    * @param pnt The interpolated trajectory point.
-   * @param target_scaling Target scaling factor used for the interpolation.
-   * @param updated_scaling Actual scaling factor used for the interpolation. It should always be <= target_scaling.
+   * @param target_scaling The target scaling factor for interpolation.
+   * @param updated_scaling The actual scaling factor used for interpolation (always <= target_scaling).
    * @return True if the interpolation is successful, false otherwise.
    */
   virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling, double& updated_scaling) = 0;
@@ -321,10 +370,22 @@ public:
 
 namespace utils
 {
+/**
+ * @brief Creates a trajectory from a YAML node.
+ *
+ * @param yaml The YAML node containing trajectory data.
+ * @return A deque of trajectory points (TrjPointPtr).
+ * @throws std::runtime_error if mandatory fields (e.g., positions or times) are missing or inconsistent.
+ */
 std::deque<TrjPointPtr> trjFromYAML(const YAML::Node& yaml);
 }
 
-// Overload the << operator for std::deque<TrjPointPtr>
+/**
+ * @brief Overloads the << operator for printing a deque of trajectory points.
+ * @param os The output stream.
+ * @param trj The deque of trajectory points.
+ * @return The modified output stream.
+ */
 inline std::ostream& operator<<(std::ostream& os, const std::deque<TrjPointPtr>& trj)
 {
   for(const TrjPointPtr& pt:trj)

@@ -54,26 +54,27 @@ typedef std::shared_ptr<SplineTrajectoryProcessor> SplineTrajectoryProcessorPtr;
 class SplineTrajectoryProcessor: public TrajectoryProcessorBase
 {
 public:
+
   /**
-   * @brief Enum for spline order.
-   *        - ZERO: position continuous
-   *        - ONE: velocity continuous
-   *        - TWO: acceleration continuous
-   *        - THREE: jerk continuous
-   *        - FOUR: snap continuous
+   * @brief Enum representing spline interpolation orders.
+   * - ZERO: Position continuity.
+   * - ONE: Velocity continuity.
+   * - TWO: Acceleration continuity.
+   * - THREE: Jerk continuity.
+   * - FOUR: Snap continuity.
    */
   enum class spline_order_t
   {
-    ZERO  = 0,
-    ONE   = 1,
-    TWO   = 2,
-    THREE = 3,
-    FOUR  = 4
+    ZERO = 0,  /**< Position continuity. */
+    ONE = 1,   /**< Velocity continuity. */
+    TWO = 2,   /**< Acceleration continuity. */
+    THREE = 3, /**< Jerk continuity. */
+    FOUR = 4   /**< Snap continuity. */
   };
 
 protected:
   /**
-   * @brief The order of the spline. Default order is ONE.
+   * @brief The spline interpolation order. Defaults to ONE (velocity continuity).
    */
   spline_order_t spline_order_ = spline_order_t::ONE;
 
@@ -81,45 +82,81 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   /**
-   * @brief Constructors.
+   * @brief Default constructor.
+   * Requires a call to init() aftwrwards.
+   */
+  SplineTrajectoryProcessor():
+    TrajectoryProcessorBase(){}
+
+  /**
+   * @brief Constructor.
+   * @param constraints The kinodynamic constraints.
+   * @param param_ns The namespace for parameter retrieval.
+   * @param logger The logger instance.
    */
   SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints,
                             const std::string& param_ns,
                             const cnr_logger::TraceLoggerPtr& logger):
     TrajectoryProcessorBase(constraints,param_ns,logger){}
 
+  /**
+   * @brief Constructor with a predefined path.
+   * @param constraints The kinodynamic constraints.
+   * @param param_ns The namespace for parameter retrieval.
+   * @param logger The logger instance.
+   * @param path The predefined path for time-law computation.
+   */
   SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints,
                             const std::string& param_ns,
                             const cnr_logger::TraceLoggerPtr& logger,
                             const std::vector<Eigen::VectorXd>& path):
     TrajectoryProcessorBase(constraints,param_ns,logger,path){}
 
+  /**
+   * @brief Constructor with a predefined spline order.
+   * @param constraints The kinodynamic constraints.
+   * @param param_ns The namespace for parameter retrieval.
+   * @param logger The logger instance.
+   * @param spline_order The spline interpolation order.
+   */
   SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints,
                             const std::string& param_ns,
                             const cnr_logger::TraceLoggerPtr& logger,
                             const spline_order_t& spline_order):
     TrajectoryProcessorBase(constraints,param_ns,logger),spline_order_(spline_order){}
 
+  /**
+   * @brief Constructor with both a predefined path and spline order.
+   * @param constraints The kinodynamic constraints.
+   * @param param_ns The namespace for parameter retrieval.
+   * @param logger The logger instance.
+   * @param path The predefined path for time-law computation.
+   * @param spline_order The spline interpolation order.
+   */
   SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints,
                             const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger,
                             const std::vector<Eigen::VectorXd>& path,
                             const spline_order_t& spline_order):
     TrajectoryProcessorBase(constraints,param_ns,logger,path),spline_order_(spline_order){}
 
+
   /**
-   * @brief init Initializes the TrajectoryProcessor object. This function should be called when the void constructor is called and it is used mainly for plugins.
-   * @param constraints The kinodynamics constraints of the robot to be considered for trajectory generation.
-   * @param param_ns_ The namespace under which to read the parameters with cnr_param.
-   * @param logger The logger for logging purposes.
-   * @param path The path for which the time-law need to be computed.
-   * @return
+   * @brief Initializes the SplineTrajectoryProcessor object with a predefined path.
+   *
+   * This function should be called when the default constructor is used. It is mainly used in plugin-based architectures.
+   *
+   * @param constraints The kinodynamic constraints for trajectory generation.
+   * @param param_ns The namespace for parameter retrieval.
+   * @param logger The logger instance.
+   * @param path The predefined path for time-law computation.
+   * @return True if initialization is successful, false otherwise.
    */
   virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger) override;
   virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path) override;
 
   /**
-   * @brief Sets the order of the spline and clears the trajectory.
-   * @param spline_order The order of the spline to set.
+   * @brief Sets the spline interpolation order and clears the existing trajectory.
+   * @param spline_order The new spline interpolation order.
    */
   void setSplineOrder(const spline_order_t& spline_order)
   {
@@ -128,14 +165,17 @@ public:
   }
 
   /**
-   * @brief Pure virtual function to interpolate a trajectory point.
+   * @brief Interpolates a trajectory point at a given time using the specified spline order.
+   *
+   * This function is overridden to provide spline-based interpolation of trajectory points.
+   *
    * @param time The time at which to interpolate.
    * @param pnt The interpolated trajectory point.
-   * @param target_scaling Target scaling factor used for the interpolation.
-   * @param updated_scaling Actual scaling factor used for the interpolation. It should always be <= target_scaling.
+   * @param target_scaling The target scaling factor for interpolation.
+   * @param updated_scaling The actual scaling factor used for interpolation (always <= target_scaling).
    * @return True if the interpolation is successful, false otherwise.
    */
   virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling, double& updated_scaling) override;
-  using TrajectoryProcessorBase::interpolate; //bring other versions of interpolate
+  using TrajectoryProcessorBase::interpolate; /**< Brings other overloads of the interpolate function into the scope. */
 };
 }
