@@ -56,6 +56,24 @@ bool TrajectoryProcessorBase::init(const KinodynamicConstraintsPtr& constraints,
   return true;
 }
 
+bool TrajectoryProcessorBase::computeTrj(const RobotStatePtr& initial_state)
+{
+  RobotStatePtr final_state;
+  return computeTrj(initial_state,final_state);
+}
+
+bool TrajectoryProcessorBase::computeTrj()
+{
+  RobotStatePtr initial_state, final_state;
+  return computeTrj(initial_state,final_state);
+}
+
+bool TrajectoryProcessorBase::interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling)
+{
+  double updated_scaling;
+  return interpolate(time, pnt, target_scaling, updated_scaling);
+}
+
 YAML::Node TrajectoryProcessorBase::toYAML() const
 {
   YAML::Node yaml;
@@ -173,6 +191,8 @@ YAML::Node TrajectoryProcessorBase::toYAML() const
   return yaml;
 }
 
+namespace utils
+{
 std::deque<TrjPointPtr> trjFromYAML(const YAML::Node& yaml)
 {
 
@@ -249,6 +269,7 @@ std::deque<TrjPointPtr> trjFromYAML(const YAML::Node& yaml)
   }
 
   return trajectory;
+}
 }
 
 }

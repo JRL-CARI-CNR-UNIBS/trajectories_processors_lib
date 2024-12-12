@@ -128,17 +128,6 @@ public:
   }
 
   /**
-   * @brief Function to compute the trajectory.
-   * @param initial_state The initial robot state.
-   * @param final_state The final robot state.
-   * @return True if the trajectory computation is successful, false otherwise.
-   */
-  //  virtual bool computeTrj() override;
-  //  virtual bool computeTrj(const RobotState& initial_state) override;
-  //  virtual bool computeTrj(const RobotState& initial_state, const RobotState& final_state) override;
-
-
-  /**
    * @brief Pure virtual function to interpolate a trajectory point.
    * @param time The time at which to interpolate.
    * @param pnt The interpolated trajectory point.
@@ -147,7 +136,6 @@ public:
    * @return True if the interpolation is successful, false otherwise.
    */
   virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling, double& updated_scaling) override;
-  virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling) override;
-
+  using TrajectoryProcessorBase::interpolate; //bring other versions of interpolate
 };
 }

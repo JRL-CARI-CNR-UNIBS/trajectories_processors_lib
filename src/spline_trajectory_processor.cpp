@@ -45,12 +45,6 @@ void fromEigen2Vector(const Eigen::VectorXd& eigen, std::vector<double> vector)
   Eigen::VectorXd::Map(&vector[0], eigen.rows()) = eigen;
 }
 
-bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling)
-{
-  double updated_scaling;
-  return interpolate(time,pnt,target_scaling,updated_scaling);
-}
-
 bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling, double& updated_scaling)
 {
   // Spline interpolator uses the target scaling factor

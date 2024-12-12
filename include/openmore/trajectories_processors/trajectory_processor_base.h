@@ -303,9 +303,9 @@ public:
    * @param final_state The final robot state.
    * @return True if the trajectory computation is successful, false otherwise.
    */
-  virtual bool computeTrj() = 0;
-  virtual bool computeTrj(const RobotStatePtr& initial_state) = 0;
   virtual bool computeTrj(const RobotStatePtr& initial_state, const RobotStatePtr& final_state) = 0;
+  virtual bool computeTrj(const RobotStatePtr& initial_state);
+  virtual bool computeTrj();
 
   /**
    * @brief Pure virtual function to interpolate a trajectory point.
@@ -316,8 +316,13 @@ public:
    * @return True if the interpolation is successful, false otherwise.
    */
   virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling, double& updated_scaling) = 0;
-  virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling) = 0;
+  virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling = 1.0);
 };
+
+namespace utils
+{
+std::deque<TrjPointPtr> trjFromYAML(const YAML::Node& yaml);
+}
 
 // Overload the << operator for std::deque<TrjPointPtr>
 inline std::ostream& operator<<(std::ostream& os, const std::deque<TrjPointPtr>& trj)
@@ -326,7 +331,5 @@ inline std::ostream& operator<<(std::ostream& os, const std::deque<TrjPointPtr>&
     os<<*pt<<"\n";
   return os;
 }
-
-std::deque<TrjPointPtr> trjFromYAML(const YAML::Node& yaml);
 
 }
