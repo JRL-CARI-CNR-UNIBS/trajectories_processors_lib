@@ -58,15 +58,15 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
 
   if((time-trj_.at(0)->time_from_start_)<0)
   {
-    pnt=trj_.at(0);
-    pnt->state_->eff_.resize(trj_.at(0)->state_->pos_.size(),0);
-    return false;
+    *(pnt->state_)=*(trj_.front()->state_); //copy the state
+    pnt->time_from_start_ = trj_.front()->time_from_start_;
+    return true;
   }
 
   if ((time-trj_.back()->time_from_start_)>=0)
   {
-    pnt=trj_.back();
-    pnt->state_->eff_.resize(trj_.back()->state_->pos_.size(),0);
+    *(pnt->state_)=*(trj_.back()->state_); //copy the state
+    pnt->time_from_start_ = trj_.back()->time_from_start_;
     return true;
   }
 
