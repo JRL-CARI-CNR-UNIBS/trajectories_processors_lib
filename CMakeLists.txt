@@ -25,19 +25,26 @@ find_package(Eigen3 REQUIRED COMPONENTS Core Dense Geometry)
 find_package(cnr_logger REQUIRED)
 find_package(cnr_param REQUIRED)
 
-set(DEPS
-   Eigen3::Eigen
-   cnr_logger::cnr_logger
-   cnr_param::cnr_param
-)
-
 add_library(${PROJECT_NAME} SHARED
              src/trajectory_processor_base.cpp
              src/spline_trajectory_processor.cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_link_libraries(${PROJECT_NAME} PUBLIC ${DEPS})
+target_link_libraries(${PROJECT_NAME} PUBLIC 
+  Eigen3::Eigen
+  cnr_logger::cnr_logger
+  cnr_param::cnr_param
+  )
+
+  ###
+  get_target_property(TRAJ_PROCESSORS_LIB_INTERFACE_LINK_LIBRARIES ${PROJECT_NAME} INTERFACE_LINK_LIBRARIES)
+  get_target_property(TRAJ_PROCESSORS_LIB_LINK_LIBRARIES ${PROJECT_NAME} LINK_LIBRARIES)
+  
+  message(STATUS "trajectories_processors_lib INTERFACE_LINK_LIBRARIES: ${TRAJ_PROCESSORS_LIB_INTERFACE_LINK_LIBRARIES}")
+  message(STATUS "trajectories_processors_lib LINK_LIBRARIES: ${TRAJ_PROCESSORS_LIB_LINK_LIBRARIES}")
+  
+###
 
 add_library("${PROJECT_NAME}::${PROJECT_NAME}" ALIAS ${PROJECT_NAME})
 
