@@ -37,15 +37,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
   cnr_param::cnr_param
   )
 
-  ###
-  get_target_property(TRAJ_PROCESSORS_LIB_INTERFACE_LINK_LIBRARIES ${PROJECT_NAME} INTERFACE_LINK_LIBRARIES)
-  get_target_property(TRAJ_PROCESSORS_LIB_LINK_LIBRARIES ${PROJECT_NAME} LINK_LIBRARIES)
-  
-  message(STATUS "trajectories_processors_lib INTERFACE_LINK_LIBRARIES: ${TRAJ_PROCESSORS_LIB_INTERFACE_LINK_LIBRARIES}")
-  message(STATUS "trajectories_processors_lib LINK_LIBRARIES: ${TRAJ_PROCESSORS_LIB_LINK_LIBRARIES}")
-  
-###
-
 add_library("${PROJECT_NAME}::${PROJECT_NAME}" ALIAS ${PROJECT_NAME})
 
 # Install
