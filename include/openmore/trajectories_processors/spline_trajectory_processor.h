@@ -51,7 +51,7 @@ typedef std::shared_ptr<SplineTrajectoryProcessor> SplineTrajectoryProcessorPtr;
  * @brief The SplineTrajectoryProcessor class processes trajectories using spline interpolation of different orders.
  */
 
-class SplineTrajectoryProcessor: public TrajectoryProcessorBase
+class SplineTrajectoryProcessor: public virtual TrajectoryProcessorBase
 {
 public:
 
