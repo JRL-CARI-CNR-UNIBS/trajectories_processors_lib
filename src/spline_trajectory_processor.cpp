@@ -188,11 +188,7 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
 
 bool SplineTrajectoryProcessor::init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger)
 {
-  trj_.clear();
-  path_.clear();
-  logger_ = logger;
-  param_ns_ = param_ns;
-  kinodynamic_constraints_ = constraints;
+  TrajectoryProcessorBase::init(constraints,param_ns,logger);
 
   int spline_order;
   std::string what, full_param_name = param_ns+"/spline_order";
@@ -238,11 +234,7 @@ bool SplineTrajectoryProcessor::init(const KinodynamicConstraintsPtr& constraint
 }
 bool SplineTrajectoryProcessor::init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path)
 {
-  trj_.clear();
-  path_ = path;
-  logger_ = logger;
-  param_ns_ = param_ns;
-  kinodynamic_constraints_ = constraints;
+  TrajectoryProcessorBase::init(constraints,param_ns,logger,path);
 
   int spline_order;
   std::string what, full_param_name = param_ns+"/spline_order";
