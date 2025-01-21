@@ -42,7 +42,7 @@ bool TrajectoryProcessorBase::init(const KinodynamicConstraintsPtr& constraints,
   trj_.clear();
   path_.clear();
   logger_ = logger;
-  param_ns_ = std::move(param_ns);
+  param_ns_ = param_ns;
   kinodynamic_constraints_ = constraints;
   return true;
 }
@@ -50,8 +50,8 @@ bool TrajectoryProcessorBase::init(const KinodynamicConstraintsPtr& constraints,
 {
   trj_.clear();
   logger_ = logger;
-  path_ = std::move(path);
-  param_ns_ = std::move(param_ns);
+  path_ = path;
+  param_ns_ = param_ns;
   kinodynamic_constraints_ = constraints;
   return true;
 }

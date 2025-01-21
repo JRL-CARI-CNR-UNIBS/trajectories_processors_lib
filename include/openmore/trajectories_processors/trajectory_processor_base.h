@@ -287,7 +287,7 @@ public:
    */
   void setPath(const std::vector<Eigen::VectorXd>& path)
   {
-    path_ = std::move(path);
+    path_ = path;
     trj_.clear();
   }
 
