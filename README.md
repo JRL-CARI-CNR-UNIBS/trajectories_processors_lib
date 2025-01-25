@@ -42,10 +42,14 @@ Represents a trajectory point, consisting of a robot state and a time from the t
 Represents the kinodynamic constraints of the robot.
 
 - **Members**:
-  - `Eigen::VectorXd max_vel_`
-  - `Eigen::VectorXd max_acc_`
+  - `Eigen::VectorXd min_pos_`
   - `Eigen::VectorXd min_vel_`
   - `Eigen::VectorXd min_acc_`
+  - `Eigen::VectorXd min_eff_`
+  - `Eigen::VectorXd max_pos_`
+  - `Eigen::VectorXd max_vel_`
+  - `Eigen::VectorXd max_acc_`
+  - `Eigen::VectorXd max_eff_`
 
 ## Usage
 
