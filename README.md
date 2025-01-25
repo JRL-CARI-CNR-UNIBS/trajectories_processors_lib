@@ -61,3 +61,6 @@ or
 ```
 
 ```trajectories_processors_lib/spline_trajectory_processor.h``` extends the base class by providing spline interpolations with selectable order from 0 to 4.
+
+## Resources
+You might be interested in [`moveit_trajectory_processor`](https://github.com/JRL-CARI-CNR-UNIBS/moveit_trajectory_processor).
