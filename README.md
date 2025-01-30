@@ -1,4 +1,8 @@
 # trajectories_processors_lib
+[![build](https://github.com/JRL-CARI-CNR-UNIBS/trajectories_processors_lib/actions/workflows/build_and_install.yaml/badge.svg)](https://github.com/JRL-CARI-CNR-UNIBS/trajectories_processors_lib/actions/workflows/build_and_install.yaml)
+[![clang-format](https://github.com/JRL-CARI-CNR-UNIBS/trajectories_processors_lib/actions/workflows/clang-format.yaml/badge.svg)](https://github.com/JRL-CARI-CNR-UNIBS/trajectories_processors_lib/actions/workflows/clang-format.yaml)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7fad0e98e668413e9207196bd38af72e)](https://app.codacy.com/gh/JRL-CARI-CNR-UNIBS/trajectories_processors_lib/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+![Status](https://img.shields.io/badge/License-BSD3-green)
 
 `trajectories_processors_lib` is a C++ library designed for processing and managing robot trajectories. 
 
