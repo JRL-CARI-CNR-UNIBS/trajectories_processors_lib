@@ -46,7 +46,8 @@ bool TrajectoryProcessorBase::init(const KinodynamicConstraintsPtr& constraints,
   kinodynamic_constraints_ = constraints;
   return true;
 }
-bool TrajectoryProcessorBase::init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path)
+bool TrajectoryProcessorBase::init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger,
+                                   const std::vector<Eigen::VectorXd>& path)
 {
   trj_.clear();
   logger_ = logger;
@@ -59,13 +60,13 @@ bool TrajectoryProcessorBase::init(const KinodynamicConstraintsPtr& constraints,
 bool TrajectoryProcessorBase::computeTrj(const RobotStatePtr& initial_state)
 {
   RobotStatePtr final_state;
-  return computeTrj(initial_state,final_state);
+  return computeTrj(initial_state, final_state);
 }
 
 bool TrajectoryProcessorBase::computeTrj()
 {
   RobotStatePtr initial_state, final_state;
-  return computeTrj(initial_state,final_state);
+  return computeTrj(initial_state, final_state);
 }
 
 bool TrajectoryProcessorBase::interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling)
@@ -134,7 +135,7 @@ YAML::Node TrajectoryProcessorBase::toYAML() const
       {
         CNR_WARN(logger_, "Velocity data missing for trajectory point " + std::to_string(i) + ".");
       }
-      velocities.push_back(YAML::Node()); // Add empty entry
+      velocities.push_back(YAML::Node());  // Add empty entry
     }
 
     if (!point->state_->acc_.empty())
@@ -150,7 +151,7 @@ YAML::Node TrajectoryProcessorBase::toYAML() const
       {
         CNR_WARN(logger_, "Acceleration data missing for trajectory point " + std::to_string(i) + ".");
       }
-      accelerations.push_back(YAML::Node()); // Add empty entry
+      accelerations.push_back(YAML::Node());  // Add empty entry
     }
 
     if (!point->state_->eff_.empty())
@@ -166,7 +167,7 @@ YAML::Node TrajectoryProcessorBase::toYAML() const
       {
         CNR_WARN(logger_, "Effort data missing for trajectory point " + std::to_string(i) + ".");
       }
-      efforts.push_back(YAML::Node()); // Add empty entry
+      efforts.push_back(YAML::Node());  // Add empty entry
     }
   }
 
@@ -195,7 +196,6 @@ namespace utils
 {
 std::deque<TrjPointPtr> trjFromYAML(const YAML::Node& yaml)
 {
-
   // Ensure mandatory fields are present
   if (!yaml["positions"] || !yaml["times"])
   {
@@ -270,6 +270,6 @@ std::deque<TrjPointPtr> trjFromYAML(const YAML::Node& yaml)
 
   return trajectory;
 }
-}
+}  // namespace utils
 
-}
+}  // namespace openmore

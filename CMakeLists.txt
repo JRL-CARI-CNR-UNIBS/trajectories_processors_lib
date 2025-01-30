@@ -21,9 +21,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #Options
 option(ADD_CUSTOM_UNINSTALL "Add uninstall target" ON)
 
-find_package(Eigen3 REQUIRED COMPONENTS Core Dense Geometry)
-find_package(cnr_logger REQUIRED)
-find_package(cnr_param REQUIRED)
+# Dependencies
+include(cmake_config/Dependencies.cmake)
 
 add_library(${PROJECT_NAME} SHARED
              src/trajectory_processor_base.cpp
@@ -86,3 +85,14 @@ if(ADD_CUSTOM_UNINSTALL)
         install_manifest.txt to be uninstalled!
         )
 endif()
+
+# Clang-format target
+file(GLOB_RECURSE ALL_SOURCE_FILES *.cpp *.h)
+
+add_custom_target(
+    format
+    COMMAND chmod +x cmake_config/clang_format_target.sh
+    COMMAND cmake_config/clang_format_target.sh
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Running clang-format on all source files"
+)

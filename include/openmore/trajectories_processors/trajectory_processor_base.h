@@ -46,7 +46,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace openmore
 {
-
 /**
  * @brief The RobotState struct represents a robot state, that is robot position, velocity, acceleration and effort.
  */
@@ -69,13 +68,17 @@ typedef std::shared_ptr<RobotState> RobotStatePtr;
 inline std::ostream& operator<<(std::ostream& os, const RobotState& state)
 {
   os << "pos: [ ";
-  for (const auto& pos : state.pos_) os << pos << " ";
+  for (const auto& pos : state.pos_)
+    os << pos << " ";
   os << "] vel: [ ";
-  for (const auto& vel : state.vel_) os << vel << " ";
+  for (const auto& vel : state.vel_)
+    os << vel << " ";
   os << "] acc: [ ";
-  for (const auto& acc : state.acc_) os << acc << " ";
+  for (const auto& acc : state.acc_)
+    os << acc << " ";
   os << "] eff: [ ";
-  for (const auto& eff : state.eff_) os << eff << " ";
+  for (const auto& eff : state.eff_)
+    os << eff << " ";
   os << "]";
   return os;
 }
@@ -85,7 +88,7 @@ inline std::ostream& operator<<(std::ostream& os, const RobotState& state)
 struct TrjPoint
 {
 public:
-  RobotStatePtr state_; /**< The robot state at the trajectory point. */
+  RobotStatePtr state_;    /**< The robot state at the trajectory point. */
   double time_from_start_; /**< Time from the start of the trajectory. */
 
   /**
@@ -114,7 +117,8 @@ inline std::ostream& operator<<(std::ostream& os, const TrjPoint& point)
 }
 
 /**
- * @brief The kinodynamic_constraints struct represents the kinodynamic constraints of the robot,  including limits for position, velocity, acceleration, and effort.
+ * @brief The kinodynamic_constraints struct represents the kinodynamic constraints of the robot,  including limits for position, velocity, acceleration, and
+ * effort.
  */
 struct KinodynamicConstraints
 {
@@ -140,45 +144,45 @@ typedef std::shared_ptr<KinodynamicConstraints> KinodynamicConstraintsPtr;
 inline std::ostream& operator<<(std::ostream& os, const KinodynamicConstraints& constraints)
 {
   // Position limits
-  if(constraints.min_pos_.cols()!=0)
+  if (constraints.min_pos_.cols() != 0)
     os << "min pos: [" << constraints.min_pos_.transpose();
   else
     os << "min pos: [n.d.";
 
-  if(constraints.max_pos_.cols()!=0)
+  if (constraints.max_pos_.cols() != 0)
     os << "] max pos: [" << constraints.max_pos_.transpose();
   else
     os << "] max pos: [n.d.";
 
   // Velocity limits
-  if(constraints.min_vel_.cols()!=0)
+  if (constraints.min_vel_.cols() != 0)
     os << "]\nmin vel: [" << constraints.min_vel_.transpose();
   else
     os << "]\nmin vel: [n.d.";
 
-  if(constraints.max_vel_.cols()!=0)
+  if (constraints.max_vel_.cols() != 0)
     os << "] max vel: [" << constraints.max_vel_.transpose();
   else
     os << "] max vel: [n.d.";
 
   // Acceleration limits
-  if(constraints.min_acc_.cols()!=0)
+  if (constraints.min_acc_.cols() != 0)
     os << "]\nmin acc: [" << constraints.min_acc_.transpose();
   else
     os << "]\nmin acc: [n.d.";
 
-  if(constraints.max_acc_.cols()!=0)
+  if (constraints.max_acc_.cols() != 0)
     os << "] max acc: [" << constraints.max_acc_.transpose();
   else
     os << "] max acc: [n.d.";
 
   // Effort limits
-  if(constraints.min_eff_.cols()!=0)
+  if (constraints.min_eff_.cols() != 0)
     os << "]\nmin eff: [" << constraints.min_eff_.transpose();
   else
     os << "]\nmin eff: [n.d.";
 
-  if(constraints.max_eff_.cols()!=0)
+  if (constraints.max_eff_.cols() != 0)
     os << "] max eff: [" << constraints.max_eff_.transpose();
   else
     os << "] max eff: [n.d.";
@@ -194,7 +198,7 @@ typedef std::shared_ptr<TrajectoryProcessorBase> TrajectoryProcessorBasePtr;
 /**
  * @brief The TrajectoryProcessorBase class provides a base class for processing trajectories.
  */
-class TrajectoryProcessorBase: public std::enable_shared_from_this<TrajectoryProcessorBase>
+class TrajectoryProcessorBase : public std::enable_shared_from_this<TrajectoryProcessorBase>
 {
 protected:
   /**
@@ -229,7 +233,9 @@ public:
    * @brief Default constructor.
    * Requires a call to init() aftwrwards.
    */
-  TrajectoryProcessorBase(){}
+  TrajectoryProcessorBase()
+  {
+  }
 
   /**
    * @brief Parameterized constructor.
@@ -237,10 +243,10 @@ public:
    * @param param_ns Parameter namespace.
    * @param logger Logger instance.
    */
-  TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints,
-                          const std::string& param_ns,
-                          const cnr_logger::TraceLoggerPtr& logger):
-    kinodynamic_constraints_(constraints), param_ns_(param_ns), logger_(logger){}
+  TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger)
+    : kinodynamic_constraints_(constraints), param_ns_(param_ns), logger_(logger)
+  {
+  }
 
   /**
    * @brief Constructor with path initialization.
@@ -249,11 +255,11 @@ public:
    * @param logger Logger instance.
    * @param path Path for time-law computation.
    */
-  TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints,
-                          const std::string& param_ns,
-                          const cnr_logger::TraceLoggerPtr& logger,
-                          const std::vector<Eigen::VectorXd>& path):
-    kinodynamic_constraints_(constraints), path_(path), param_ns_(param_ns), logger_(logger){}
+  TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger,
+                          const std::vector<Eigen::VectorXd>& path)
+    : kinodynamic_constraints_(constraints), path_(path), param_ns_(param_ns), logger_(logger)
+  {
+  }
 
   /**
    * @brief Initializes the TrajectoryProcessor object with a predefined path.
@@ -267,7 +273,8 @@ public:
    * @return True if initialization is successful, false otherwise.
    */
   virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger);
-  virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger, const std::vector<Eigen::VectorXd>& path);
+  virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger,
+                    const std::vector<Eigen::VectorXd>& path);
 
   /**
    * @brief Returns a shared pointer to the current instance.
@@ -328,7 +335,7 @@ public:
    */
   const double& getTrjDuration() const
   {
-    if(trj_.empty())
+    if (trj_.empty())
       throw std::runtime_error("trj is empty");
 
     return trj_.back()->time_from_start_;
@@ -378,7 +385,7 @@ namespace utils
  * @throws std::runtime_error if mandatory fields (e.g., positions or times) are missing or inconsistent.
  */
 std::deque<TrjPointPtr> trjFromYAML(const YAML::Node& yaml);
-}
+}  // namespace utils
 
 /**
  * @brief Overloads the << operator for printing a deque of trajectory points.
@@ -388,9 +395,9 @@ std::deque<TrjPointPtr> trjFromYAML(const YAML::Node& yaml);
  */
 inline std::ostream& operator<<(std::ostream& os, const std::deque<TrjPointPtr>& trj)
 {
-  for(const TrjPointPtr& pt:trj)
-    os<<*pt<<"\n";
+  for (const TrjPointPtr& pt : trj)
+    os << *pt << "\n";
   return os;
 }
 
-}
+}  // namespace openmore
