@@ -35,6 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
+#include <deque>
 #include <Eigen/Core>
 #include <cnr_param/cnr_param.h>
 #include <cnr_logger/cnr_logger.h>
