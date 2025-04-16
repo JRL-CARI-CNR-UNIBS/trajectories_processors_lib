@@ -9,34 +9,34 @@ on:
   pull_request:
     branches:
       - master
-      - devel
-      - pull_req
   schedule:
     - cron: '0 8 * * *'
 
 jobs:
   install-and-run:
-    runs-on: ubuntu-latest  
-
     strategy:
       matrix:
-        ubuntu_version: [20.04, 22.04, latest]  
+        ubuntu_version: [ubuntu:20.04, ubuntu:22.04, ubuntu:latest]
       fail-fast: true
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ matrix.ubuntu_version }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Run in Docker container
-        container: 
-          image: ubuntu:${{ matrix.ubuntu_version }}  
-          options: --privileged 
+        
+      - name: Install dependencies
         run: |
+          export DEBIAN_FRONTEND=noninteractive
           apt update
-          apt install -y libboost-all-dev libeigen3-dev libyaml-cpp-dev liblog4cxx-dev libgtest-dev
+          apt install -y cmake build-essential git libboost-all-dev libeigen3-dev libyaml-cpp-dev liblog4cxx-dev libgtest-dev
 
-          # Build e installazione
-          mkdir -p build install
+      - name: Build & Install
+        run: |
+          mkdir -p build
+          mkdir -p install
+
           export PATH_TO_WS="$(pwd)"
           echo "Workspace Path: $PATH_TO_WS"
           ls -la
@@ -44,6 +44,7 @@ jobs:
           export PATH="$PATH_TO_WS/install/bin:$PATH"
           export LD_LIBRARY_PATH="$PATH_TO_WS/install/lib"
           export CMAKE_PREFIX_PATH="$PATH_TO_WS/install"
+
           echo "PATH: $PATH"
           echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
           echo "CMAKE_PREFIX_PATH: $CMAKE_PREFIX_PATH"
