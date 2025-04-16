@@ -25,15 +25,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set timezone and configure tzdata
-        run: |
-          export DEBIAN_FRONTEND=noninteractive
-          echo "Etc/UTC" > /etc/timezone
-          dpkg-reconfigure -f noninteractive tzdata
-          
+        
       - name: Install dependencies
         run: |
+          export DEBIAN_FRONTEND=noninteractive
           apt update
           apt install -y cmake build-essential git libboost-all-dev libeigen3-dev libyaml-cpp-dev liblog4cxx-dev libgtest-dev
 
