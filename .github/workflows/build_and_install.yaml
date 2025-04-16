@@ -16,26 +16,27 @@ on:
 
 jobs:
   install-and-run:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  
+
     strategy:
       matrix:
-        ubuntu_version: [ubuntu-20.04, ubuntu-22.04, ubuntu-latest]
+        ubuntu_version: [20.04, 22.04, latest]  
       fail-fast: true
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Run in Docker container
+        container: 
+          image: ubuntu:${{ matrix.ubuntu_version }}  
+          options: --privileged 
         run: |
-          sudo apt update
-          sudo apt install -y libboost-all-dev libeigen3-dev libyaml-cpp-dev liblog4cxx-dev libgtest-dev
+          apt update
+          apt install -y libboost-all-dev libeigen3-dev libyaml-cpp-dev liblog4cxx-dev libgtest-dev
 
-      - name: Build & Install
-        run: |
-          mkdir -p build
-          mkdir -p install
-
+          # Build e installazione
+          mkdir -p build install
           export PATH_TO_WS="$(pwd)"
           echo "Workspace Path: $PATH_TO_WS"
           ls -la
@@ -43,7 +44,6 @@ jobs:
           export PATH="$PATH_TO_WS/install/bin:$PATH"
           export LD_LIBRARY_PATH="$PATH_TO_WS/install/lib"
           export CMAKE_PREFIX_PATH="$PATH_TO_WS/install"
-
           echo "PATH: $PATH"
           echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
           echo "CMAKE_PREFIX_PATH: $CMAKE_PREFIX_PATH"
