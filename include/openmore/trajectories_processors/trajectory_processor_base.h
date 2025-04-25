@@ -86,6 +86,9 @@ inline std::ostream& operator<<(std::ostream& os, const RobotState& state)
 /**
  * @brief The TrjPoint struct represents a trajectory point consisting of a robot state and a timestamp from the start of the trajectory.
  */
+struct TrjPoint;
+typedef std::shared_ptr<TrjPoint> TrjPointPtr;
+
 struct TrjPoint
 {
 public:
@@ -101,8 +104,23 @@ public:
     state_ = std::make_shared<RobotState>();
     time_from_start_ = std::numeric_limits<double>::infinity();
   }
+
+  /**
+   * @brief Creates a deep copy of this TrjPoint instance.
+   *
+   * Allocates and returns a shared pointer to a new TrjPoint object,
+   * copying both the timestamp and the robot state.
+   *
+   * @return TrjPointPtr A shared pointer to the cloned TrjPoint.
+   */
+  TrjPointPtr clone()
+  {
+    TrjPointPtr pnt = std::make_shared<TrjPoint>();
+    pnt->time_from_start_ = this->time_from_start_;
+    *(pnt->state_) = *(this->state_);
+    return pnt;
+  }
 };
-typedef std::shared_ptr<TrjPoint> TrjPointPtr;
 
 /**
  * @brief Overloads the << operator for TrjPoint for printing.
@@ -374,6 +392,17 @@ public:
    */
   virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling, double& updated_scaling) = 0;
   virtual bool interpolate(const double& time, TrjPointPtr& pnt, const double& target_scaling = 1.0);
+
+  /**
+   * @brief Creates a deep copy of the TrajectoryProcessorBase instance.
+   *
+   * This pure virtual method must be implemented by all derived classes.
+   * It is used to create and return a new instance of the specific subclass,
+   * replicating all relevant internal state.
+   *
+   * @return TrajectoryProcessorBasePtr A shared pointer to the newly created clone of this object.
+   */
+  virtual TrajectoryProcessorBasePtr clone() = 0;
 };
 
 namespace utils
