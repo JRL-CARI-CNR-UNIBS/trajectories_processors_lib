@@ -321,4 +321,5 @@ bool SplineTrajectoryProcessor::init(const KinodynamicConstraintsPtr& constraint
 
   return true;
 }
+
 }  // namespace openmore
