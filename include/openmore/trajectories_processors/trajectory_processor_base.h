@@ -37,8 +37,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <deque>
 #include <Eigen/Core>
-#include <cnr_param/cnr_param.h>
-#include <cnr_logger/cnr_logger.h>
+#include <graph_core/logger.h>
+#include <graph_core/params.h>
 
 /**
  * @file TrajectoryProcessorBase.h
@@ -236,14 +236,14 @@ protected:
   std::deque<TrjPointPtr> trj_;
 
   /**
-   * @brief Namespace for parameter retrieval using cnr_param.
+   * @brief Parameters of the processor (e.g. spline_order).
    */
-  std::string param_ns_;
+  graph::core::ParamMap params_;
 
   /**
    * @brief Logger for debugging and tracing.
    */
-  cnr_logger::TraceLoggerPtr logger_;
+  graph::core::LoggerPtr logger_;
 
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -259,24 +259,24 @@ public:
   /**
    * @brief Parameterized constructor.
    * @param constraints Kinodynamic constraints.
-   * @param param_ns Parameter namespace.
+   * @param params Parameters of the processor.
    * @param logger Logger instance.
    */
-  TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger)
-    : kinodynamic_constraints_(constraints), param_ns_(param_ns), logger_(logger)
+  TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints, const graph::core::ParamMap& params, const graph::core::LoggerPtr& logger)
+    : kinodynamic_constraints_(constraints), params_(params), logger_(logger)
   {
   }
 
   /**
    * @brief Constructor with path initialization.
    * @param constraints Kinodynamic constraints.
-   * @param param_ns Parameter namespace.
+   * @param params Parameters of the processor.
    * @param logger Logger instance.
    * @param path Path for time-law computation.
    */
-  TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger,
+  TrajectoryProcessorBase(const KinodynamicConstraintsPtr& constraints, const graph::core::ParamMap& params, const graph::core::LoggerPtr& logger,
                           const std::vector<Eigen::VectorXd>& path)
-    : kinodynamic_constraints_(constraints), path_(path), param_ns_(param_ns), logger_(logger)
+    : kinodynamic_constraints_(constraints), path_(path), params_(params), logger_(logger)
   {
   }
 
@@ -286,13 +286,13 @@ public:
    * This function should be called when the default constructor is used. It initializes the object with a specific path and constraints.
    *
    * @param constraints The kinodynamic constraints of the robot to be used for trajectory generation.
-   * @param param_ns The namespace from which to read parameters using cnr_param.
+   * @param params The parameters of the processor (e.g. spline_order).
    * @param logger The logger instance for debugging and tracing.
    * @param path The predefined path for time-law computation.
    * @return True if initialization is successful, false otherwise.
    */
-  virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger);
-  virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger,
+  virtual bool init(const KinodynamicConstraintsPtr& constraints, const graph::core::ParamMap& params, const graph::core::LoggerPtr& logger);
+  virtual bool init(const KinodynamicConstraintsPtr& constraints, const graph::core::ParamMap& params, const graph::core::LoggerPtr& logger,
                     const std::vector<Eigen::VectorXd>& path);
 
   /**

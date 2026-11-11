@@ -32,8 +32,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(${PROJECT_NAME} PUBLIC 
   Eigen3::Eigen
-  cnr_logger::cnr_logger
-  cnr_param::cnr_param
+  graph_core::graph_core
   )
 
 add_library("${PROJECT_NAME}::${PROJECT_NAME}" ALIAS ${PROJECT_NAME})

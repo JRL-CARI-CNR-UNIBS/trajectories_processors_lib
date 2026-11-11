@@ -51,7 +51,7 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
 
   if (trj_.empty())
   {
-    CNR_ERROR(logger_, "Trajectory is empty or it has not been computed yet");
+    GC_ERROR(logger_, "Trajectory is empty or it has not been computed yet");
     return false;
   }
 
@@ -228,98 +228,57 @@ bool SplineTrajectoryProcessor::interpolate(const double& time, TrjPointPtr& pnt
   return true;
 }
 
-bool SplineTrajectoryProcessor::init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger)
+bool SplineTrajectoryProcessor::init(const KinodynamicConstraintsPtr& constraints, const graph::core::ParamMap& params, const graph::core::LoggerPtr& logger)
 {
-  TrajectoryProcessorBase::init(constraints, param_ns, logger);
+  TrajectoryProcessorBase::init(constraints, params, logger);
 
+  return readSplineOrder();
+}
+
+bool SplineTrajectoryProcessor::readSplineOrder()
+{
   int spline_order;
-  std::string what, full_param_name = param_ns + "/spline_order";
-  if (cnr::param::has(full_param_name, what))
+  try
   {
-    if (not cnr::param::get(full_param_name, spline_order, what))
-    {
-      CNR_ERROR(logger, "Cannot load " << full_param_name + " parameter.\n" << what);
+    if (not graph::core::get_param(logger_, params_, "spline_order", spline_order))
       return false;
-    }
-    else
-    {
-      switch (spline_order)
-      {
-        case 0:
-          spline_order_ = spline_order_t::ZERO;
-          break;
-        case 1:
-          spline_order_ = spline_order_t::ONE;
-          break;
-        case 2:
-          spline_order_ = spline_order_t::TWO;
-          break;
-        case 3:
-          spline_order_ = spline_order_t::THREE;
-          break;
-        case 4:
-          spline_order_ = spline_order_t::FOUR;
-          break;
-        default:
-          CNR_ERROR(logger_, "Spline order should be 0, 1, 2, 3 or 4");
-          return false;
-      }
-    }
   }
-  else
+  catch (const std::invalid_argument&)
   {
-    CNR_WARN(logger, full_param_name + " parameter not available.\n" << what);
-    return false;
+    return false;  // already logged by get_param
+  }
+
+  switch (spline_order)
+  {
+    case 0:
+      spline_order_ = spline_order_t::ZERO;
+      break;
+    case 1:
+      spline_order_ = spline_order_t::ONE;
+      break;
+    case 2:
+      spline_order_ = spline_order_t::TWO;
+      break;
+    case 3:
+      spline_order_ = spline_order_t::THREE;
+      break;
+    case 4:
+      spline_order_ = spline_order_t::FOUR;
+      break;
+    default:
+      GC_ERROR(logger_, "Spline order should be 0, 1, 2, 3 or 4");
+      return false;
   }
 
   return true;
 }
-bool SplineTrajectoryProcessor::init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger,
+
+bool SplineTrajectoryProcessor::init(const KinodynamicConstraintsPtr& constraints, const graph::core::ParamMap& params, const graph::core::LoggerPtr& logger,
                                      const std::vector<Eigen::VectorXd>& path)
 {
-  TrajectoryProcessorBase::init(constraints, param_ns, logger, path);
+  TrajectoryProcessorBase::init(constraints, params, logger, path);
 
-  int spline_order;
-  std::string what, full_param_name = param_ns + "/spline_order";
-  if (cnr::param::has(full_param_name, what))
-  {
-    if (not cnr::param::get(full_param_name, spline_order, what))
-    {
-      CNR_ERROR(logger, "Cannot load " << full_param_name + " parameter.\n" << what);
-      return false;
-    }
-    else
-    {
-      switch (spline_order)
-      {
-        case 0:
-          spline_order_ = spline_order_t::ZERO;
-          break;
-        case 1:
-          spline_order_ = spline_order_t::ONE;
-          break;
-        case 2:
-          spline_order_ = spline_order_t::TWO;
-          break;
-        case 3:
-          spline_order_ = spline_order_t::THREE;
-          break;
-        case 4:
-          spline_order_ = spline_order_t::FOUR;
-          break;
-        default:
-          CNR_ERROR(logger_, "Spline order should be 0, 1, 2, 3 or 4");
-          return false;
-      }
-    }
-  }
-  else
-  {
-    CNR_WARN(logger, full_param_name + " parameter not available.\n" << what);
-    return false;
-  }
-
-  return true;
+  return readSplineOrder();
 }
 
 }  // namespace openmore

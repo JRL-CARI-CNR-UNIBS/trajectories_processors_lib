@@ -91,51 +91,51 @@ public:
   /**
    * @brief Constructor.
    * @param constraints The kinodynamic constraints.
-   * @param param_ns The namespace for parameter retrieval.
-   * @param logger The logger instance.
+   * @param params Parameters of the processor (spline_order).
+   * @param logger The logger instance (it can be null).
    */
-  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger)
-    : TrajectoryProcessorBase(constraints, param_ns, logger)
+  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const graph::core::ParamMap& params, const graph::core::LoggerPtr& logger)
+    : TrajectoryProcessorBase(constraints, params, logger)
   {
   }
 
   /**
    * @brief Constructor with a predefined path.
    * @param constraints The kinodynamic constraints.
-   * @param param_ns The namespace for parameter retrieval.
-   * @param logger The logger instance.
+   * @param params Parameters of the processor (spline_order).
+   * @param logger The logger instance (it can be null).
    * @param path The predefined path for time-law computation.
    */
-  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger,
+  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const graph::core::ParamMap& params, const graph::core::LoggerPtr& logger,
                             const std::vector<Eigen::VectorXd>& path)
-    : TrajectoryProcessorBase(constraints, param_ns, logger, path)
+    : TrajectoryProcessorBase(constraints, params, logger, path)
   {
   }
 
   /**
    * @brief Constructor with a predefined spline order.
    * @param constraints The kinodynamic constraints.
-   * @param param_ns The namespace for parameter retrieval.
-   * @param logger The logger instance.
+   * @param params Parameters of the processor (spline_order).
+   * @param logger The logger instance (it can be null).
    * @param spline_order The spline interpolation order.
    */
-  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger,
+  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const graph::core::ParamMap& params, const graph::core::LoggerPtr& logger,
                             const spline_order_t& spline_order)
-    : TrajectoryProcessorBase(constraints, param_ns, logger), spline_order_(spline_order)
+    : TrajectoryProcessorBase(constraints, params, logger), spline_order_(spline_order)
   {
   }
 
   /**
    * @brief Constructor with both a predefined path and spline order.
    * @param constraints The kinodynamic constraints.
-   * @param param_ns The namespace for parameter retrieval.
-   * @param logger The logger instance.
+   * @param params Parameters of the processor (spline_order).
+   * @param logger The logger instance (it can be null).
    * @param path The predefined path for time-law computation.
    * @param spline_order The spline interpolation order.
    */
-  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger,
+  SplineTrajectoryProcessor(const KinodynamicConstraintsPtr& constraints, const graph::core::ParamMap& params, const graph::core::LoggerPtr& logger,
                             const std::vector<Eigen::VectorXd>& path, const spline_order_t& spline_order)
-    : TrajectoryProcessorBase(constraints, param_ns, logger, path), spline_order_(spline_order)
+    : TrajectoryProcessorBase(constraints, params, logger, path), spline_order_(spline_order)
   {
   }
 
@@ -145,15 +145,23 @@ public:
    * This function should be called when the default constructor is used. It is mainly used in plugin-based architectures.
    *
    * @param constraints The kinodynamic constraints for trajectory generation.
-   * @param param_ns The namespace for parameter retrieval.
-   * @param logger The logger instance.
+   * @param params Parameters of the processor (spline_order).
+   * @param logger The logger instance (it can be null).
    * @param path The predefined path for time-law computation.
    * @return True if initialization is successful, false otherwise.
    */
-  virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger) override;
-  virtual bool init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger,
+  virtual bool init(const KinodynamicConstraintsPtr& constraints, const graph::core::ParamMap& params, const graph::core::LoggerPtr& logger) override;
+  virtual bool init(const KinodynamicConstraintsPtr& constraints, const graph::core::ParamMap& params, const graph::core::LoggerPtr& logger,
                     const std::vector<Eigen::VectorXd>& path) override;
 
+protected:
+  /**
+   * @brief Reads spline_order from params_.
+   * @return true if the parameter exists and is valid (0, 1, 2, 3 or 4).
+   */
+  bool readSplineOrder();
+
+public:
   /**
    * @brief Sets the spline interpolation order and clears the existing trajectory.
    * @param spline_order The new spline interpolation order.

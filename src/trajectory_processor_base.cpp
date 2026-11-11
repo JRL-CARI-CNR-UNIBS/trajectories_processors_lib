@@ -37,22 +37,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace openmore
 {
-bool TrajectoryProcessorBase::init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger)
+bool TrajectoryProcessorBase::init(const KinodynamicConstraintsPtr& constraints, const graph::core::ParamMap& params, const graph::core::LoggerPtr& logger)
 {
   trj_.clear();
   path_.clear();
   logger_ = logger;
-  param_ns_ = param_ns;
+  params_ = params;
   kinodynamic_constraints_ = constraints;
   return true;
 }
-bool TrajectoryProcessorBase::init(const KinodynamicConstraintsPtr& constraints, const std::string& param_ns, const cnr_logger::TraceLoggerPtr& logger,
+bool TrajectoryProcessorBase::init(const KinodynamicConstraintsPtr& constraints, const graph::core::ParamMap& params, const graph::core::LoggerPtr& logger,
                                    const std::vector<Eigen::VectorXd>& path)
 {
   trj_.clear();
   logger_ = logger;
   path_ = path;
-  param_ns_ = param_ns;
+  params_ = params;
   kinodynamic_constraints_ = constraints;
   return true;
 }
@@ -81,7 +81,7 @@ YAML::Node TrajectoryProcessorBase::toYAML() const
 
   if (trj_.empty())
   {
-    CNR_WARN(logger_, "Trajectory is empty. Returning an empty YAML node.");
+    GC_WARN(logger_, "Trajectory is empty. Returning an empty YAML node.");
     return yaml;
   }
 
@@ -105,13 +105,13 @@ YAML::Node TrajectoryProcessorBase::toYAML() const
     // Add mandatory fields
     if (point->state_->pos_.empty())
     {
-      CNR_ERROR(logger_, "Position data missing for trajectory point " + std::to_string(i));
+      GC_ERROR(logger_, "Position data missing for trajectory point " + std::to_string(i));
       throw std::runtime_error("Position data is required but missing.");
     }
 
     if (std::isinf(point->time_from_start_))
     {
-      CNR_ERROR(logger_, "time_from_start is undefined for trajectory point " + std::to_string(i));
+      GC_ERROR(logger_, "time_from_start is undefined for trajectory point " + std::to_string(i));
       throw std::runtime_error("time_from_start must be defined for all trajectory points.");
     }
 
@@ -133,7 +133,7 @@ YAML::Node TrajectoryProcessorBase::toYAML() const
     {
       if (has_velocities)
       {
-        CNR_WARN(logger_, "Velocity data missing for trajectory point " + std::to_string(i) + ".");
+        GC_WARN(logger_, "Velocity data missing for trajectory point " + std::to_string(i) + ".");
       }
       velocities.push_back(YAML::Node());  // Add empty entry
     }
@@ -149,7 +149,7 @@ YAML::Node TrajectoryProcessorBase::toYAML() const
     {
       if (has_accelerations)
       {
-        CNR_WARN(logger_, "Acceleration data missing for trajectory point " + std::to_string(i) + ".");
+        GC_WARN(logger_, "Acceleration data missing for trajectory point " + std::to_string(i) + ".");
       }
       accelerations.push_back(YAML::Node());  // Add empty entry
     }
@@ -165,7 +165,7 @@ YAML::Node TrajectoryProcessorBase::toYAML() const
     {
       if (has_efforts)
       {
-        CNR_WARN(logger_, "Effort data missing for trajectory point " + std::to_string(i) + ".");
+        GC_WARN(logger_, "Effort data missing for trajectory point " + std::to_string(i) + ".");
       }
       efforts.push_back(YAML::Node());  // Add empty entry
     }

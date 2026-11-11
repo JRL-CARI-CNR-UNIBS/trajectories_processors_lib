@@ -16,8 +16,8 @@ The `TrajectoryProcessorBase` class provides a base for processing trajectories.
   - `KinodynamicConstraints kinodynamic_constraints_`: The kinodynamic constraints of the robot.
   - `std::vector<Eigen::VectorXd> path_`: The path for which the time law need to be computed.
   - `std::deque<TrjPoint> trj_`: The computed trajectory.
-  - `std::string param_ns_`: The namespace under which to read the parameters.
-  - `cnr_logger::TraceLoggerPtr logger_`: The logger for logging purposes.
+  - `graph::core::ParamMap params_`: The parameters of the processor (e.g. `spline_order`).
+  - `graph::core::LoggerPtr logger_`: The logger (see `graph_core/logger.h`); it can be null.
 
 The main functions of the class are:
   - `computeTrj`: computes the time law for the given path, optionally with given starting and ending conditions.

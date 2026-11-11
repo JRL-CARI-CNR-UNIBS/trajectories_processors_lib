@@ -17,57 +17,11 @@ include(${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake)
 
 message("\n-----------------------------------------------\n")
 
+# graph_core provides the logger (graph_core/logger.h) and the parameters (graph_core/params.h)
 CPMFindPackage(
-  NAME cnr_logger
-  GITHUB_REPOSITORY CNR-STIIMA-IRAS/cnr_logger
+  NAME graph_core
+  GITHUB_REPOSITORY JRL-CARI-CNR-UNIBS/graph_core
   GIT_TAG master
-  OPTIONS 
-    "USE_ROS1 OFF"
-    "ENABLE_TESTING OFF"
-    "ENABLE_COVERAGE_TESTING OFF"
-    "COMPILE_EXAMPLE OFF"
-)
-
-message("\n-----------------------------------------------\n")
-
-# If cnr_param is not already installed on the system, install cnr_yaml before cnr_param.
-# cnr_yaml could be already installed or missing.
-
-string(ASCII 27 Esc)
-set(RESET "${Esc}[m")
-set(BLUE "${Esc}[34m")
-
-find_package(cnr_param QUIET)
-
-if(NOT cnr_param_FOUND)
-  # Check if cnr_yaml is already installed on the system
-  find_package(cnr_yaml QUIET)
-
-  if(NOT cnr_yaml_FOUND)
-    # If cnr_yaml is not found, use CPM to install it
-    CPMAddPackage(
-      NAME cnr_yaml
-      GITHUB_REPOSITORY CNR-STIIMA-IRAS/cnr_yaml
-      GIT_TAG master
-      OPTIONS
-        "BUILD_UNIT_TESTS OFF"
-    )
-  endif()
-endif()
-
-message("\n-----------------------------------------------\n")
-
-CPMFindPackage(
-  NAME cnr_param
-  GITHUB_REPOSITORY CNR-STIIMA-IRAS/cnr_param
-  GIT_TAG master
-  OPTIONS  
-    "COMPILE_MAPPED_FILE_MODULE ON"
-    "BUILD_UNIT_TESTS OFF"
-    "BUILD_INTEGRATION_TESTS OFF"
-    "RETRIVE_DEPENDENCIES OFF"
-    "BUILD_INTEGRATION_TESTS OFF"
-    "BUILD_AS_A_CATKIN_PACKAGE OFF"
 )
 
 message("\n-----------------------------------------------\n")
